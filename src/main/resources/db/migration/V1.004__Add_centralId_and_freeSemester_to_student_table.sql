@@ -1,0 +1,2 @@
+--alter table student add column centralId int default 0;
+--alter table student add column freeSemester int default 0;
