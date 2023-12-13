@@ -36,10 +36,10 @@ public class Course {
     private String name;
 
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Student> students;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Teacher> teachers;
 
 //    public Course(String name, Student student, Teacher teacher) {
