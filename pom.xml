@@ -148,6 +148,12 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.2</version>
+        </dependency>
+
 
     </dependencies>
 
@@ -219,6 +225,32 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <!--
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>5.3.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/openapi/student-openapi.yml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <configOptions>
+                                <useTags>true</useTags>
+                                <dateLibrary>java8-localdatetime</dateLibrary>
+                                <configPackage>hu.webuni.student.api.config</configPackage>
+                                <interfaceOnly>true</interfaceOnly>
+                            </configOptions>
+                            <apiPackage>hu.webuni.student.api</apiPackage>
+                            <modelPackage>hu.webuni.student.api.model</modelPackage>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>--> <!-- leiro a localhost:8080/v3/api-docs.yaml alatt lesz -->
+
         </plugins>
     </build>
 
