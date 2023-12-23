@@ -1,6 +1,6 @@
 package hu.webuni.student.mapper;
 
-import hu.webuni.student.dto.CourseDto;
+import hu.webuni.student.api.model.CourseDto;
 import hu.webuni.student.model.Course;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;

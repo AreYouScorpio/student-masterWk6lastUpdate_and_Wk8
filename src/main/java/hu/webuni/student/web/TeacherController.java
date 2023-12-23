@@ -1,6 +1,6 @@
 package hu.webuni.student.web;
 
-import hu.webuni.student.dto.TeacherDto;
+import hu.webuni.student.api.model.TeacherDto;
 import hu.webuni.student.mapper.TeacherMapper;
 import hu.webuni.student.model.Teacher;
 import hu.webuni.student.service.TeacherService;

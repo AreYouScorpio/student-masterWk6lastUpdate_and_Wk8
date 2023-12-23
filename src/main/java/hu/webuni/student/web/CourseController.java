@@ -1,7 +1,7 @@
 package hu.webuni.student.web;
 
 import com.querydsl.core.types.Predicate;
-import hu.webuni.student.dto.CourseDto;
+import hu.webuni.student.api.model.CourseDto;
 import hu.webuni.student.mapper.CourseMapper;
 import hu.webuni.student.model.Course;
 import hu.webuni.student.model.HistoryData;
