@@ -1,33 +1,27 @@
 package hu.webuni.student.web;
 
-import com.querydsl.core.types.Predicate;
+import hu.webuni.student.api.CourseControllerApi;
 import hu.webuni.student.api.model.CourseDto;
+import hu.webuni.student.api.model.HistoryDataCourseDto;
+import hu.webuni.student.api.model.Pageable;
 import hu.webuni.student.mapper.CourseMapper;
-import hu.webuni.student.model.Course;
-import hu.webuni.student.model.HistoryData;
 import hu.webuni.student.repository.CourseRepository;
 import hu.webuni.student.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.querydsl.binding.QuerydslPredicate;
-import org.springframework.data.web.SortDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.NativeWebRequest;
 
-import jakarta.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/courses")
-public class CourseController {
+public class CourseController implements CourseControllerApi {
 
-    //https://mapstruct.org/ minták !!! és pom.xml --- https://mapstruct.org/documentation/installation/
+    private final NativeWebRequest nativeWebRequest;
 
     @Autowired
     CourseService courseService;
@@ -38,250 +32,60 @@ public class CourseController {
     @Autowired
     CourseRepository courseRepository;
 
-    //@Autowired
-    //LogEntryService logEntryService;
-
-    @GetMapping
-    public Iterable<CourseDto> getAllCourse() {
-        return courseMapper.coursesToDtos(courseRepository.findAll());
+    @Override
+    public Optional<NativeWebRequest> getRequest() {
+        return Optional.of(nativeWebRequest);
     }
 
-
-    @GetMapping("/{id}")
-    public CourseDto getCourseById(@PathVariable long id) {
-        Course course = courseService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        // deleted after mapper ---> AirportDto airportDto = airports.get(id);
-//        if (airportDto!=null)
-//            return ResponseEntity.ok(airportDto);
-//        else
-//        return ResponseEntity.notFound().build();
-       /* ehelyett is orElseThrow és a return marad
-        if (airport != null)
-            return airportMapper.airportToDto(airport);
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        */
-        return courseMapper.courseToDto(course);
-
+    @Override
+    public ResponseEntity<CourseDto> createCourse(CourseDto courseDto) {
+        return CourseControllerApi.super.createCourse(courseDto);
     }
 
-
-    @PostMapping
-    public CourseDto createCourse(@RequestBody @Valid CourseDto courseDto /*, BindingResult errors */) {
-        //if (errors.hasErrors()) throw new ...
-
-
-        // áthelyezve mapper bevezetésével a service-be:
-        // checkUniqueIata(airportDto.getIata());
-
-        Course course = courseRepository.save(courseMapper.dtoToCourse(courseDto));
-        // szintén törölve áthelyezés miatt --> airports.put(airportDto.getId(), airportDto);
-        // return airportDto; --->
-        return courseMapper.courseToDto(course);
+    @Override
+    public ResponseEntity<Void> deleteCourse(Long id) {
+        return CourseControllerApi.super.deleteCourse(id);
     }
 
-
-    // Teacher`s solution added Wk1:
-
-    // Wk2 cache added
-    @Cacheable("pagedCourses")
-    @GetMapping("/searchNew")
-    public List<CourseDto> search(@QuerydslPredicate(root = Course.class) Predicate predicate, @RequestParam Optional<Boolean> full, @SortDefault("id") Pageable pageable) {
-        //id szt legyen default rendezes, h mar az elso page is rendezetten jojjon, ne legyen gond kesobb
-        //Iterable<Course> result = courseRepository.findAll(predicate);
-        boolean isSummaryNeeded = full.isEmpty() || !full.get();
-        Iterable<Course> result = isSummaryNeeded ?
-                courseRepository.findAll(predicate, pageable) :
-                courseService.searchCourses(predicate, pageable);
-        //csak fullos esetben jon a select course es a select count melle meg a 2db custom lekerdezes is (student , teacher)
-        System.out.println(result);
-        if (isSummaryNeeded)
-            return courseMapper.courseSummariesToDtos(result);
-        else
-            return (List<CourseDto>) courseMapper.coursesToDtos(result);
+    @Override
+    public ResponseEntity<Object> getAllCourse() {
+        return CourseControllerApi.super.getAllCourse();
     }
 
-
-    @GetMapping("/{id}/history")
-    public List<HistoryData<CourseDto>> getHistoryById(@PathVariable long id) {
-
-
-        List<HistoryData<Course>> courses = courseService.getCourseHistory(id);
-
-
-        List<HistoryData<CourseDto>> courseDtosWithHistory =
-                new ArrayList<>();
-
-        courses.forEach(courseHistoryData ->
-                courseDtosWithHistory.add(
-                        new HistoryData<>(
-//                                courseMapper.courseSummaryToDto(courseHistoryData.getData()), //kapcsolatok nelkuli mappeles
-                                courseMapper.courseToDto(courseHistoryData.getData()), //kapcsolatokkal mappeles, viszont lecsatolt allapotban lesznek, ennek a betolteset a service-ben kell kikenyszeriteni,
-                                courseHistoryData.getRevType(),
-                                courseHistoryData.getRevision(),
-                                courseHistoryData.getDate()
-                        )));
-
-        return courseDtosWithHistory;
-
-
+    @Override
+    public ResponseEntity<CourseDto> getCourseById(Long id) {
+        return CourseControllerApi.super.getCourseById(id);
     }
 
-
-    @GetMapping("/{date}/historyByDate")
-    public List<HistoryData<CourseDto>> getHistoryByDate(@PathVariable LocalDateTime date) {
-
-
-        List<HistoryData<Course>> courses = courseService.getCourseHistoryByDate(date);
-
-
-        List<HistoryData<CourseDto>> courseDtosWithHistory =
-                new ArrayList<>();
-
-        courses.forEach(courseHistoryData ->
-                courseDtosWithHistory.add(
-                        new HistoryData<>(
-//                                courseMapper.courseSummaryToDto(courseHistoryData.getData()), //kapcsolatok nelkuli mappeles
-                                courseMapper.courseToDto(courseHistoryData.getData()), //kapcsolatokkal mappeles, viszont lecsatolt allapotban lesznek, ennek a betolteset a service-ben kell kikenyszeriteni,
-                                courseHistoryData.getRevType(),
-                                courseHistoryData.getRevision(),
-                                courseHistoryData.getDate()
-                        )));
-
-        return courseDtosWithHistory;
-
-
+    @Override
+    public ResponseEntity<List<HistoryDataCourseDto>> getCourseStatusByDate(Long id, LocalDateTime date) {
+        return CourseControllerApi.super.getCourseStatusByDate(id, date);
     }
 
-    @GetMapping("/{id}/{date}/statusByDate")
-    public List<HistoryData<CourseDto>> getCourseStatusByDate(@PathVariable long id, @PathVariable LocalDateTime date) throws Throwable {
-
-
-        List<HistoryData<Course>> courses = courseService.getCourseStatusByDateTime(id, date);
-
-
-        List<HistoryData<CourseDto>> courseDtosWithHistory =
-                new ArrayList<>();
-
-        courses.forEach(courseHistoryData ->
-                courseDtosWithHistory.add(
-                        new HistoryData<>(
-//                                courseMapper.courseSummaryToDto(courseHistoryData.getData()), //kapcsolatok nelkuli mappeles
-                                courseMapper.courseToDto(courseHistoryData.getData()), //kapcsolatokkal mappeles, viszont lecsatolt allapotban lesznek, ennek a betolteset a service-ben kell kikenyszeriteni,
-                                courseHistoryData.getRevType(),
-                                courseHistoryData.getRevision(),
-                                courseHistoryData.getDate()
-                        )));
-
-
-//        return courseDtosWithHistory.stream().max(Comparator.comparing(courseDtoHistoryData -> courseDtoHistoryData.getDate())).stream().toList();
-
-        return courseDtosWithHistory;
-
-//        return courseMapper.courseSummariesToDtos(courses);
-
+    @Override
+    public ResponseEntity<CourseDto> getCourseStatusByDateOnlyValid(Long id, LocalDateTime date) {
+        return CourseControllerApi.super.getCourseStatusByDateOnlyValid(id, date);
     }
 
-
-    @GetMapping("/{id}/{date}/statusByDateOnlyValid")
-    public CourseDto getCourseStatusByDateOnlyValid(@PathVariable long id, @PathVariable LocalDateTime date) throws Throwable {
-
-
-        HistoryData<Course> course = courseService.getCourseStatusByDateOnlyValid(id, date);
-        Course courseResult = course.getData();
-
-        return courseMapper.courseToDto(courseResult);
-
-
+    @Override
+    public ResponseEntity<List<HistoryDataCourseDto>> getHistoryByDate(LocalDateTime date) {
+        return CourseControllerApi.super.getHistoryByDate(date);
     }
 
-
-    @DeleteMapping("/{id}")
-    public void deleteCourse(@PathVariable long id) {
-        courseService.delete(id);
+    @Override
+    public ResponseEntity<List<HistoryDataCourseDto>> getHistoryById(Long id) {
+        return CourseControllerApi.super.getHistoryById(id);
     }
 
-
-    /*
-
-    @PutMapping("/{id}")
-    public ResponseEntity<AirportDto> modifyAirport(@PathVariable long id,
-                                                    @RequestBody AirportDto airportDto) {
-        if (!airports.containsKey(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        checkUniqueIata(airportDto.getIata());
-        airportDto.setId(id);
-        airports.put(id, airportDto);
-        return ResponseEntity.ok(airportDto);
-    }
-new PutMapping after MapStruct added:
----->
-
-    */
-
-    /* saját mego:
-
-    @PutMapping("/{id}")
-    public AirportDto modifyAirport(@PathVariable long id,
-                                                    @RequestBody @Valid AirportDto airportDto) {
-
-        Airport airport = airportService.findById(id);
-
-
-        if (airport != null)
-            airportService.update(id, airportMapper.dtoToAirport(airportDto));
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-
-        return airportMapper.airportToDto(airport);
-
-
+    @Override
+    public ResponseEntity<CourseDto> modifyCourse(Long id, CourseDto courseDto) {
+        return CourseControllerApi.super.modifyCourse(id, courseDto);
     }
 
-
-
-     */
-
-
-    // ---> ehelyett tanári megoldás, de enyém is működött ---->
-
-
-    @PutMapping("/{id}")
-    public ResponseEntity<CourseDto> modifyCourse(@PathVariable long id,
-                                                  @RequestBody CourseDto courseDto) {
-
-        Course course = courseMapper.dtoToCourse(courseDto);
-        course.setId(id); // hogy tudjunk módosítani azonos iata-jút a uniqecheck ellenére
-        try {
-            CourseDto savedCourseDto = courseMapper.courseToDto(courseService.update(course));
-
-            // LogEntryRepository.save(new LogEntry("Airport modified with id " + id)); -- service hozzáadva
-            // logEntryService.createLog("Airport modified with id " + id); -inkább a service update legyen felelős érte, h a logot lementse
-            // a service autowired-et is lehet így innét törölni, átvinni AirportService-be
-
-
-            return ResponseEntity.ok(savedCourseDto);
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+    @Override
+    public ResponseEntity<List<CourseDto>> search(Object predicate, Pageable pageable, Boolean full) {
+        return CourseControllerApi.super.search(predicate, pageable, full);
     }
-
-
-    /* my old solution
-
-    @PostMapping("/search")
-    public List<CourseDto> searchCourses(@RequestBody CourseDto example) {
-
-
-        return courseMapper.coursesToDtos(courseService.findCoursesByExample(courseMapper.dtoToCourse(example)));
-    }
-
-
-     */
 
 
 }

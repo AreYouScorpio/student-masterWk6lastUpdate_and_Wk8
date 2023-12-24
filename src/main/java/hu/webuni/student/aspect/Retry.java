@@ -7,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME) //meddig el az annotacio, futasi idoben is felterkepezi a Spring, hol a logcall
 @Target({ElementType.TYPE, ElementType.METHOD}) // target mire akarjuk ratenni, metodusokra es tipusokre (osztalyra, aminek osszes metodusat szeretnem pl loggolni)
-public @interface LogCall {
+public @interface Retry {
 }

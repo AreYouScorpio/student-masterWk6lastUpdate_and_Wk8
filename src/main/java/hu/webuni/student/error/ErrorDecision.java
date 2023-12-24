@@ -1,6 +1,5 @@
 package hu.webuni.student.error;
 
-import hu.webuni.student.aspect.LogCall;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;

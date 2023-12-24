@@ -1,6 +1,6 @@
 package hu.webuni.student.service;
 
-import hu.webuni.student.aspect.LogCall;
+import hu.webuni.student.aspect.Retry;
 import hu.webuni.student.error.ErrorDecision;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class SemesterService {
     ErrorDecision errorDecision;
 
 
-    @LogCall
+    @Retry
     public int getFreeSemester(long centralId) {
         System.out.println("getFreeSemester called");
         try {

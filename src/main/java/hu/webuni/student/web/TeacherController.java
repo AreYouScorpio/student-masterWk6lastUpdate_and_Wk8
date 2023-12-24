@@ -1,157 +1,62 @@
 package hu.webuni.student.web;
 
+import hu.webuni.student.api.TeacherControllerApi;
+import hu.webuni.student.api.model.GetTeacherById200Response;
 import hu.webuni.student.api.model.TeacherDto;
 import hu.webuni.student.mapper.TeacherMapper;
-import hu.webuni.student.model.Teacher;
 import hu.webuni.student.service.TeacherService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.NativeWebRequest;
 
-import jakarta.validation.Valid;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/teachers")
-public class TeacherController {
+public class TeacherController implements TeacherControllerApi {
 
-    //https://mapstruct.org/ minták !!! és pom.xml --- https://mapstruct.org/documentation/installation/
-
+    private final NativeWebRequest nativeWebRequest;
     @Autowired
     TeacherService teacherService;
 
     @Autowired
     TeacherMapper teacherMapper;
 
-    //@Autowired
-    //LogEntryService logEntryService;
 
-    @GetMapping
-    public List<TeacherDto> getAllTeacher() {
-        return teacherMapper.teachersToDtos(teacherService.findAll());
+    @Override
+    public Optional<NativeWebRequest> getRequest() {
+        return Optional.of(nativeWebRequest);    }
+
+    @Override
+    public ResponseEntity<TeacherDto> createTeacher(TeacherDto teacherDto) {
+        return TeacherControllerApi.super.createTeacher(teacherDto);
     }
 
-
-    @GetMapping("/{id}")
-    public TeacherDto getTeacherById(@PathVariable long id) {
-        Teacher teacher = teacherService.findById(id)
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        // deleted after mapper ---> AirportDto airportDto = airports.get(id);
-//        if (airportDto!=null)
-//            return ResponseEntity.ok(airportDto);
-//        else
-//        return ResponseEntity.notFound().build();
-       /* ehelyett is orElseThrow és a return marad
-        if (airport != null)
-            return airportMapper.airportToDto(airport);
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        */
-        return teacherMapper.teacherToDto(teacher);
-
+    @Override
+    public ResponseEntity<Void> deleteTeacher(Long id) {
+        return TeacherControllerApi.super.deleteTeacher(id);
     }
 
-
-    @PostMapping
-    public TeacherDto createTeacher(@RequestBody @Valid TeacherDto teacherDto /*, BindingResult errors */) {
-        //if (errors.hasErrors()) throw new ...
-
-
-        // áthelyezve mapper bevezetésével a service-be:
-        // checkUniqueIata(airportDto.getIata());
-
-        Teacher teacher = teacherService.save(teacherMapper.dtoToTeacher(teacherDto));
-        // szintén törölve áthelyezés miatt --> airports.put(airportDto.getId(), airportDto);
-        // return airportDto; --->
-        return teacherMapper.teacherToDto(teacher);
+    @Override
+    public ResponseEntity<List<TeacherDto>> getAllTeacher() {
+        return TeacherControllerApi.super.getAllTeacher();
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteTeacher(@PathVariable long id) {
-        teacherService.delete(id);
+    @Override
+    public ResponseEntity<GetTeacherById200Response> getTeacherById(Long id) {
+        return TeacherControllerApi.super.getTeacherById(id);
     }
 
-
-    /*
-
-    @PutMapping("/{id}")
-    public ResponseEntity<AirportDto> modifyAirport(@PathVariable long id,
-                                                    @RequestBody AirportDto airportDto) {
-        if (!airports.containsKey(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        checkUniqueIata(airportDto.getIata());
-        airportDto.setId(id);
-        airports.put(id, airportDto);
-        return ResponseEntity.ok(airportDto);
-    }
-new PutMapping after MapStruct added:
----->
-
-    */
-
-    /* saját mego:
-
-    @PutMapping("/{id}")
-    public AirportDto modifyAirport(@PathVariable long id,
-                                                    @RequestBody @Valid AirportDto airportDto) {
-
-        Airport airport = airportService.findById(id);
-
-
-        if (airport != null)
-            airportService.update(id, airportMapper.dtoToAirport(airportDto));
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-
-        return airportMapper.airportToDto(airport);
-
-
+    @Override
+    public ResponseEntity<TeacherDto> modifyTeacher(Long id, TeacherDto teacherDto) {
+        return TeacherControllerApi.super.modifyTeacher(id, teacherDto);
     }
 
-
-
-     */
-
-
-    // ---> ehelyett tanári megoldás, de enyém is működött ---->
-
-
-    @PutMapping("/{id}")
-    public ResponseEntity<TeacherDto> modifyTeacher(@PathVariable long id,
-                                                    @RequestBody TeacherDto teacherDto) {
-
-        Teacher teacher = teacherMapper.dtoToTeacher(teacherDto);
-        teacher.setId(id); // hogy tudjunk módosítani azonos iata-jút a uniqecheck ellenére
-        try {
-            TeacherDto savedTeacherDto = teacherMapper.teacherToDto(teacherService.update(teacher));
-
-            // LogEntryRepository.save(new LogEntry("Airport modified with id " + id)); -- service hozzáadva
-            // logEntryService.createLog("Airport modified with id " + id); -inkább a service update legyen felelős érte, h a logot lementse
-            // a service autowired-et is lehet így innét törölni, átvinni AirportService-be
-
-
-            return ResponseEntity.ok(savedTeacherDto);
-        }
-        catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+    @Override
+    public ResponseEntity<List<TeacherDto>> searchTeachers(TeacherDto teacherDto) {
+        return TeacherControllerApi.super.searchTeachers(teacherDto);
     }
-
-
-    @PostMapping("/search")
-    public List<TeacherDto> searchTeachers(@RequestBody TeacherDto example){
-
-
-
-        return teacherMapper.teachersToDtos(teacherService.findTeachersByExample(teacherMapper.dtoToTeacher(example)));
-    }
-
-
-
 }

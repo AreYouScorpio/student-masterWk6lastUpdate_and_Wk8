@@ -1,19 +1,17 @@
 package hu.webuni.student.aspect;
 
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-public class LoggingAspect {
+public class RetryAspect {
 
     //@Around("execution(* hu.webuni.student.repository.*.*(..))") //barmely tipus(interface v osztaly) /barmely metodus/barmely parameter(..)
-    @Pointcut("@annotation(hu.webuni.student.aspect.LogCall) || @within(hu.webuni.student.aspect.LogCall)") //mikor kell meghivodnia.. ha a metodusra ratesszuk a @LogCall annotaciot, akk hivodjon meg VAGY olyan tipuson belul van, amely tipuson rajta van a @LogCall annotacio (pl interface-en, v metoduson)
+    @Pointcut("@annotation(hu.webuni.student.aspect.Retry) || @within(hu.webuni.student.aspect.Retry)") //mikor kell meghivodnia.. ha a metodusra ratesszuk a @LogCall annotaciot, akk hivodjon meg VAGY olyan tipuson belul van, amely tipuson rajta van a @LogCall annotacio (pl interface-en, v metoduson)
     public void annotationLogCall(){
 
     }
@@ -48,7 +46,7 @@ public class LoggingAspect {
 
     //@Before("execution(* hu.webuni.student.service.*.*(..))")
     //@Before("hu.webuni.student.aspect.LoggingAspect.annotationLogCall()") // ez a metodus definialja a szabalyt, a pointcut-ot
-    @Around("hu.webuni.student.aspect.LoggingAspect.annotationLogCall()")
+    @Around("hu.webuni.student.aspect.RetryAspect.annotationRetry()")
     public Object logBefore(ProceedingJoinPoint joinPoint) throws Throwable {
         int maxAttempts = 5;
         int attempts = 0;
