@@ -44,7 +44,7 @@ public class StudentController implements StudentControllerApi {
     @Override
     public ResponseEntity<Void> deleteStudent(Long id) {
         studentService.delete(id);
-        ResponseEntity.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
@@ -80,7 +80,7 @@ public class StudentController implements StudentControllerApi {
     }
 
     @Override
-    public ResponseEntity<List<StudentDto>> searchStudents(StudentDto studentDto) {
+    public ResponseEntity<List<StudentDto>> searchStudents(StudentDto example) {
         return ResponseEntity.ok(studentMapper.studentsToDtos(studentService.findStudentsByExample(studentMapper.dtoToStudent(example))));
 
     }
