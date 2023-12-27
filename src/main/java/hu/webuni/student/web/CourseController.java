@@ -163,7 +163,7 @@ public class CourseController implements CourseControllerApi {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
-
+/*
     @Override
     public ResponseEntity<List<CourseDto>> search(Object predicate, Pageable pageable, Boolean full) {
         boolean isSummaryNeeded = full.isEmpty() || !full.get();
@@ -178,4 +178,6 @@ public class CourseController implements CourseControllerApi {
             return ResponseEntity.ok((List<CourseDto>) courseMapper.coursesToDtos(result));    }
 
 
+
+ */
 }
