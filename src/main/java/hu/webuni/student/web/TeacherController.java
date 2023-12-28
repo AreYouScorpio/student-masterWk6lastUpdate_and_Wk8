@@ -1,7 +1,7 @@
 package hu.webuni.student.web;
 
 import hu.webuni.student.api.TeacherControllerApi;
-import hu.webuni.student.api.model.GetTeacherById200Response;
+import hu.webuni.student.api.model.StudentDto;
 import hu.webuni.student.api.model.TeacherDto;
 import hu.webuni.student.mapper.TeacherMapper;
 import hu.webuni.student.model.Teacher;
@@ -55,7 +55,7 @@ public class TeacherController implements TeacherControllerApi {
     }
 
     @Override
-    public ResponseEntity<GetTeacherById200Response> getTeacherById(Long id) {
+    public ResponseEntity<TeacherDto> getTeacherById(Long id) {
         Teacher teacher = teacherService.findById(id)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
         return ResponseEntity.ok(teacherMapper.teacherToDto(teacher));

@@ -12,7 +12,7 @@ public class RetryAspect {
 
     //@Around("execution(* hu.webuni.student.repository.*.*(..))") //barmely tipus(interface v osztaly) /barmely metodus/barmely parameter(..)
     @Pointcut("@annotation(hu.webuni.student.aspect.Retry) || @within(hu.webuni.student.aspect.Retry)") //mikor kell meghivodnia.. ha a metodusra ratesszuk a @LogCall annotaciot, akk hivodjon meg VAGY olyan tipuson belul van, amely tipuson rajta van a @LogCall annotacio (pl interface-en, v metoduson)
-    public void annotationLogCall(){
+    public void annotationRetry(){
 
     }
 
