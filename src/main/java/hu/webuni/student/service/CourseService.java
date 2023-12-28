@@ -224,7 +224,7 @@ public class CourseService {
                     Object[] objArray = (Object[]) o;
                     DefaultRevisionEntity revisionEntity = (DefaultRevisionEntity) objArray[1];
                     Course course = (Course) objArray[0];
-                    course.getName().toString(); //betoltes kikenyszeritese, barmit hivok rajta, csak akkor toltodik be (controllerben sima mappeles, h a kapcsolatok is jojjenek, de lecsatolt allapotban kerulnek ide)
+                    if (course!=null && course.getName()!=null) {course.getName().toString();} //betoltes kikenyszeritese, barmit hivok rajta, csak akkor toltodik be (controllerben sima mappeles, h a kapcsolatok is jojjenek, de lecsatolt allapotban kerulnek ide)
                     course.getStudents().size();
                     course.getTeachers().size();
                     return new HistoryData<Course>(

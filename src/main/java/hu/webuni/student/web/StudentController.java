@@ -29,6 +29,7 @@ public class StudentController implements StudentControllerApi {
     @Autowired
     StudentService studentService;
 
+
     @Autowired
     StudentMapper studentMapper;
 
@@ -49,7 +50,9 @@ public class StudentController implements StudentControllerApi {
 
     @Override
     public ResponseEntity<StudentDto> getStudentById(Long id) {
-                 Student student = studentService.findById(id)
+        //System.out.println("Hello id");
+
+        Student student = studentService.findById(id)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
         return ResponseEntity.ok(studentMapper.studentToDto(student));
     }
@@ -76,6 +79,7 @@ public class StudentController implements StudentControllerApi {
 
     @Override
     public ResponseEntity<List<StudentDto>> getAllStudent() {
+        //System.out.println("Hello all");
         return ResponseEntity.ok(studentMapper.studentsToDtos(studentService.findAll()));
     }
 
