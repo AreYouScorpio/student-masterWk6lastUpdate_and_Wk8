@@ -3,7 +3,6 @@ package hu.webuni.student.web;
 import hu.webuni.student.api.CourseControllerApi;
 import hu.webuni.student.api.model.CourseDto;
 import hu.webuni.student.api.model.HistoryDataCourseDto;
-import hu.webuni.student.api.model.Pageable;
 import hu.webuni.student.mapper.CourseMapper;
 import hu.webuni.student.mapper.HistoryDataMapper;
 import hu.webuni.student.model.Course;
@@ -12,12 +11,20 @@ import hu.webuni.student.repository.CourseRepository;
 import hu.webuni.student.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.MethodParameter;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +38,8 @@ public class CourseController implements CourseControllerApi {
     private final NativeWebRequest nativeWebRequest;
 
     private final HistoryDataMapper historyDataMapper;
+
+    private final PageableHandlerMethodArgumentResolver pageableResolver;
     @Autowired
     CourseService courseService;
 
@@ -71,6 +80,8 @@ public class CourseController implements CourseControllerApi {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return ResponseEntity.ok(courseMapper.courseToDto(course));
     }
+
+
 
     @Override
     public ResponseEntity<List<HistoryDataCourseDto>> getCourseStatusByDate(Long id, LocalDateTime date) throws Throwable {
@@ -163,7 +174,41 @@ public class CourseController implements CourseControllerApi {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
-/*
+
+    public void configPageable(@SortDefault("id") Pageable pageable) { //ahogy itt annotaljuk, az kerul a methodparameterbe a search-ben, de ha mashol maskepp akarjuk, felvehetunk ujabb metodusokat
+
+    }
+
+    @Override
+    public ResponseEntity<List<CourseDto>> search(Object predicate, Boolean full, Integer page, Integer size, String sort) throws NoSuchMethodException {
+        //id szt legyen default rendezes, h mar az elso page is rendezetten jojjon, ne legyen gond kesobb
+        //Iterable<Course> result = courseRepository.findAll(predicate);
+        //boolean isSummaryNeeded = full.isEmpty() || !full.get();
+        boolean isSummaryNeeded = full == null ? false: full;
+        Method method =  this.getClass().getMethod("configPageable", Pageable.class); // a metodus neve, a metodus argumentumlistaja
+        MethodParameter methodParameter = new MethodParameter(method, 0); // csinalunk egy method local vart is
+        // --> azt irja le, h a pageable tipusu metodusargumentum melyik controllermetodus hanyadik argumentuma
+        // megnezi azt is, van-e masik annotacioja .. pl mi is ratettuk a @SortDefault("id")-t
+        // nekunk nincs sehol egy pageable bemeno parameterunk -> ha nincs, akk csinalunk egy ilyen metodust -> public void configPageable
+        // mindig behazudhatjuk, hanyadik argumentum
+        ModelAndViewContainer mavContainer = null; // no need for getting pageable
+        WebDataBinderFactory binderFactory =  null; // no need for getting pageable
+        //these 3 resolveArgument needed:
+        Pageable pageable = pageableResolver.resolveArgument(methodParameter, mavContainer, nativeWebRequest, binderFactory);
+        Iterable<Course> result = isSummaryNeeded ?
+                courseRepository.findAll(predicate, pageable) :
+                courseService.searchCourses(predicate, pageable);
+        //csak fullos esetben jon a select course es a select count melle meg a 2db custom lekerdezes is (student , teacher)
+        System.out.println(result);
+        List<CourseDto> resultList = (List<CourseDto>) courseMapper.coursesToDtos(result);
+        if (isSummaryNeeded)
+            return ResponseEntity.ok(courseMapper.courseSummariesToDtos(result));
+        else
+            return ResponseEntity.ok(resultList);
+    }
+
+
+    /*
     @Override
     public ResponseEntity<List<CourseDto>> search(Object predicate, Pageable pageable, Boolean full) {
         boolean isSummaryNeeded = full.isEmpty() || !full.get();
