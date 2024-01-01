@@ -282,6 +282,7 @@
                                 <dateLibrary>java8-localdatetime</dateLibrary> <!-- entitasok es Dto-k kozti konverzio igy nem kell -->
                                 <configPackage>hu.webuni.student.api.config</configPackage>
                                 <interfaceOnly>true</interfaceOnly> <!-- csak interface-eket szeretnenk generaltatni -->
+                                <!-- this is to delete as it prevents the generation of controllers -->
                                 <!--<sourceFolder>src/gen/java/main</sourceFolder> felulirhatjuk, mien folderbe generalja, de ez most nem kell, jo a default -->
                                 <apiPackage>hu.webuni.student.api</apiPackage> <!-- a controller interface-e ide kerul -->
                                 <modelPackage>hu.webuni.student.api.model</modelPackage> <!-- Dto-k vagy API vegpontokon megjeleno osztalyok itt jelennek meg, az adattipusok -->
