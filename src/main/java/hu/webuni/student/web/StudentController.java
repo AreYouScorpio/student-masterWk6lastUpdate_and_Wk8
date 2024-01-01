@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -87,5 +88,10 @@ public class StudentController implements StudentControllerApi {
     public ResponseEntity<List<StudentDto>> searchStudents(StudentDto example) {
         return ResponseEntity.ok(studentMapper.studentsToDtos(studentService.findStudentsByExample(studentMapper.dtoToStudent(example))));
 
+    }
+
+    @Override
+    public ResponseEntity<String> uploadImageForStudent(String id, String fileName, MultipartFile content) {
+    return null;
     }
 }

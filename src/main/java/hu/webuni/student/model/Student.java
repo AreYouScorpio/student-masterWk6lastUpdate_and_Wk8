@@ -36,6 +36,10 @@ public class Student {
     private int centralId;
     private int freeSemester;
 
+    @OneToMany
+    @JoinColumn(name = "student_id") //idegen kulcs a masik oldalon ez legyen
+    private Set<Image> images;
+
     @ManyToMany(mappedBy = "students")
     private Set<Course> courses;
 
