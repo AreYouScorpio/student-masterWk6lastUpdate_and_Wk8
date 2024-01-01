@@ -9,11 +9,12 @@ create table course_students (courses_id bigint not null, students_id bigint not
 create table course_students_aud (rev integer not null, revtype smallint, courses_id bigint not null, students_id bigint not null, primary key (rev, courses_id, students_id));
 create table course_teachers (course_id bigint not null, teachers_id bigint not null, primary key (course_id, teachers_id));
 create table course_teachers_aud (rev integer not null, revtype smallint, course_id bigint not null, teachers_id bigint not null, primary key (rev, course_id, teachers_id));
-create table image (id bigint not null, file_name varchar(255), data bytea, primary key (id));
+create table image (id bigint not null, student_id bigint, file_name varchar(255), data bytea, primary key (id));
 create table image_aud (rev integer not null, revtype smallint, id bigint not null, file_name varchar(255), data bytea, primary key (rev, id));
 create table revinfo (rev integer not null, revtstmp bigint, primary key (rev));
-create table student (birthdate date, central_id integer not null, free_semester integer not null, semester integer not null, id bigint not null, student_id bigint unique, name varchar(255), primary key (id));
-create table student_aud (birthdate date, central_id integer, free_semester integer, rev integer not null, revtype smallint, semester integer, id bigint not null, student_id bigint, name varchar(255), primary key (rev, id));
+create table student (birthdate date, central_id integer not null, free_semester integer not null, semester integer not null, id bigint not null, name varchar(255), primary key (id));
+create table student_aud (birthdate date, central_id integer, free_semester integer, rev integer not null, revtype smallint, semester integer, id bigint not null, name varchar(255), primary key (rev, id));
+create table student_image_aud (rev integer not null, revtype smallint, id bigint not null, student_id bigint not null, primary key (rev, id, student_id));
 create table teacher (birthdate date, id bigint not null, name varchar(255), primary key (id));
 create table teacher_aud (birthdate date, rev integer not null, revtype smallint, id bigint not null, name varchar(255), primary key (rev, id));
 alter table if exists course_aud add constraint FK7wota7b9g9bu9by751v8r8j65 foreign key (rev) references revinfo;
@@ -23,7 +24,8 @@ alter table if exists course_students_aud add constraint FK53xchn8n2cpmyfr1tvaa7
 alter table if exists course_teachers add constraint FKe3n62rwx3uc1yucgkmw6gjkm5 foreign key (teachers_id) references teacher;
 alter table if exists course_teachers add constraint FKlmee8ivi6ymoe34wgwknlurpb foreign key (course_id) references course;
 alter table if exists course_teachers_aud add constraint FKhxsr1pho67e2es9pv4v0js9l9 foreign key (rev) references revinfo;
+alter table if exists image add constraint FKkdnkltse884wuiqwkt4cpuo9m foreign key (student_id) references student;
 alter table if exists image_aud add constraint FKetc5y2t13bkdk5yuj4eswagd4 foreign key (rev) references revinfo;
-alter table if exists student add constraint FK25j3bqbltrod1hjpw9ocuix9e foreign key (student_id) references image;
 alter table if exists student_aud add constraint FKj009xm0wjydklskl2dgnfyyjq foreign key (rev) references revinfo;
+alter table if exists student_image_aud add constraint FKpqmebiwrai7uqjniy93c1dg2e foreign key (rev) references revinfo;
 alter table if exists teacher_aud add constraint FKsg6tnk689ja9qg8qhnyarygx5 foreign key (rev) references revinfo;

@@ -11,6 +11,7 @@ import org.hibernate.envers.Audited;
 @ToString(onlyExplicitlyIncluded = true)
 @Entity
 @Audited
+@Builder
 public class Image {
     @Id
     @GeneratedValue

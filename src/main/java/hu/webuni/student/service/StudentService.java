@@ -3,9 +3,11 @@ package hu.webuni.student.service;
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
+import hu.webuni.student.model.Image;
 import hu.webuni.student.model.QStudent;
 import hu.webuni.student.model.Student;
 import hu.webuni.student.repository.CourseRepository;
+import hu.webuni.student.repository.ImageRepository;
 import hu.webuni.student.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import java.util.concurrent.ScheduledFuture;
 @Service
 public class StudentService {
 
+    private final ImageRepository imageRepository;
     @Autowired
     StudentRepository studentRepository;
     @Autowired
@@ -166,6 +169,20 @@ public class StudentService {
         ScheduledFuture<?> scheduledFuture = pollerJobs.get(id);
         if(scheduledFuture!=null)
             scheduledFuture.cancel(false); // ha epp futasban van, akarjuk-e megszakitani, azt nem akarjuk
+    }
+
+
+    @Transactional
+    public Image saveImageForStudent(long studentId, String fileName, byte[] bytes) {
+        Student student = studentRepository.findById(studentId).get();
+        Image image = Image.builder()
+                .data(bytes)
+                .fileName(fileName)
+                .build();
+        image = imageRepository.save(image);
+        student.setImage(image);
+        return image;
+
     }
 
 }
