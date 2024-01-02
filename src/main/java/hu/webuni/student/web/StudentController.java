@@ -69,7 +69,7 @@ public class StudentController implements StudentControllerApi {
         //System.out.println("Hello id");
 
         Student student = studentService.findById(id)
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return ResponseEntity.ok(studentMapper.studentToDto(student));
     }
 
@@ -81,8 +81,7 @@ public class StudentController implements StudentControllerApi {
             StudentDto savedStudentDto = studentMapper.studentToDto(studentService.update(student));
 
             return ResponseEntity.ok(savedStudentDto);
-        }
-        catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
@@ -106,7 +105,7 @@ public class StudentController implements StudentControllerApi {
     }
 
     @Override
-    public ResponseEntity<String> uploadImageForStudent(Long id, String fileName, MultipartFile content)  {
+    public ResponseEntity<String> uploadImageForStudent(Long id, String fileName, MultipartFile content) {
         /*
         try {
             byte[] imageData = readImageData(content.getInputStream());
@@ -148,14 +147,11 @@ public class StudentController implements StudentControllerApi {
         /* this is for saving into file + saving the file location into DB for student -> */
 
 
-
-
-
-
- {
+        {
             if (content.isEmpty()) {
                 return ResponseEntity.badRequest().body("Please upload a file");
             }
+            fileName = "student_" + id + "_" + content.getOriginalFilename(); // Include student ID in the file name
 
             try {
                 String filePath = getResourceFilePath(fileName);
@@ -191,9 +187,7 @@ public class StudentController implements StudentControllerApi {
         }
 
 
-
     }
-
 
 
     // Method to get the resource file path
