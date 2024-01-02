@@ -22,4 +22,11 @@ public class Image {
     //@Lob
     //@Type(type="org.hibernate.type.BinaryType") // A Hibernate 6 esetében már nem a @Type annotációval lehet elérni, hogy a bináris adatokat bytea típusra képezze le Postgres-ben, hanem egyszerűen el kell hagyni a @Lob annotációt:
     private byte[] data;
+
+
+    @OneToOne(mappedBy = "image")
+    private Student student;
+
+
+
 }

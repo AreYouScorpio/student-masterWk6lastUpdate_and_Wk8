@@ -88,7 +88,8 @@ public class CourseController implements CourseControllerApi {
 
 
     @Override
-    public ResponseEntity<List<HistoryDataCourseDto>> getCourseStatusByDate(Long id, LocalDateTime date) throws Throwable {
+    public ResponseEntity<List<HistoryDataCourseDto>> getCourseStatusByDate(Long id, LocalDateTime date)  {
+        try{
         List<HistoryData<Course>> courses = courseService.getCourseStatusByDateTime(id, date);
 
 
@@ -103,16 +104,23 @@ public class CourseController implements CourseControllerApi {
 
 //        return courseDtosWithHistory.stream().max(Comparator.comparing(courseDtoHistoryData -> courseDtoHistoryData.getDate())).stream().toList();
 
-        return ResponseEntity.ok(courseDtosWithHistory);
+        return ResponseEntity.ok(courseDtosWithHistory);} catch (Throwable e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public ResponseEntity<CourseDto> getCourseStatusByDateOnlyValid(Long id, LocalDateTime date) throws Throwable {
+    public ResponseEntity<CourseDto> getCourseStatusByDateOnlyValid(Long id, LocalDateTime date) {
+        try{
         HistoryData<Course> course = courseService.getCourseStatusByDateOnlyValid(id, date);
         Course courseResult = course.getData();
 
         return ResponseEntity.ok(courseMapper.courseToDto(courseResult));
-    }
+    } catch (Throwable e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }}
 
     @Override
     public ResponseEntity<List<HistoryDataCourseDto>> getHistoryByDate(LocalDateTime date) {

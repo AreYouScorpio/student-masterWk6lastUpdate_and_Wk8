@@ -185,4 +185,23 @@ public class StudentService {
 
     }
 
+    public String getImageLocationForStudent(Long studentId) {
+        // Implement logic to retrieve the image location for the given student ID from the database
+        // This assumes that each student has a field to store the image location, adjust accordingly based on your database structure
+        return studentRepository.findById(studentId)
+                .map(Student::getImageLocation)
+                .orElse(null);
+    }
+
+    public void saveImageLocationForStudent(Long studentId, String filePath) {
+        Optional<Student> optionalStudent = studentRepository.findById(studentId);
+        if (optionalStudent.isPresent()) {
+            Student student = optionalStudent.get();
+            student.setImageLocation(filePath);
+            studentRepository.save(student);
+        } else {
+            // Handle scenario where student with given ID is not found
+            throw new NoSuchElementException("Student not found with ID: " + studentId);
+        }
+    }
 }

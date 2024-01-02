@@ -23,11 +23,13 @@ public class ImageController implements ImageControllerApi {
 
     @Override
     public ResponseEntity<Resource> downloadImage(Long id) {
-        /*
+
+
         return ResponseEntity.ok(
                 new ByteArrayResource(imageRepository.findById(id).get().getData())
         );
-         */
+
+        /*
         Optional<Image> imageOptional = imageRepository.findById(id);
         if (imageOptional.isEmpty()) {
             System.out.println("No image exists");
@@ -44,4 +46,6 @@ public class ImageController implements ImageControllerApi {
                 .body(new InputStreamResource(inputStream));
     }
 
-}
+
+         */
+}}

@@ -18,6 +18,8 @@ import java.util.Set;
 @Entity
 @Cacheable
 @Audited
+@Getter
+@Setter
 public class Student {
 
     @Id
@@ -37,8 +39,10 @@ public class Student {
     private int freeSemester;
 
     @OneToOne
-    @JoinColumn(name = "student_id") //idegen kulcs a masik oldalon ez legyen
+    @JoinColumn(name = "id") //idegen kulcs a masik oldalon ez legyen
     private Image image;
+
+    private String imageLocation;
 
     @ManyToMany(mappedBy = "students")
     private Set<Course> courses;
