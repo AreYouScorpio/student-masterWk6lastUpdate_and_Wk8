@@ -12,6 +12,8 @@ import org.hibernate.envers.Audited;
 @Entity
 @Audited
 @Builder
+@Getter
+@Setter
 public class Image {
     @Id
     @GeneratedValue

@@ -49,6 +49,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <option name="mapstruct.verbose" value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.5.5.Final/mapstruct-processor-1.5.5.Final.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.5.Final/mapstruct-1.5.5.Final.jar" />
@@ -72,7 +73,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="student" options="-parameters" />
       <module name="student-masterWk2" options="-parameters" />
-      <module name="student-masterWk3" options="-parameters" />
+      <module name="student-masterWk3" options="-parameters -Amapstruct.verbose=true" />
     </option>
   </component>
 </project>

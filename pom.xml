@@ -216,6 +216,11 @@
                             <version>${hibernate.version}</version>
                         </path>
                     </annotationProcessorPaths>
+                    <source>your-source-version</source>
+                    <target>your-target-version</target>
+                    <compilerArgs>
+                        <arg>-Amapstruct.verbose=true</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>

@@ -446,7 +446,8 @@ paths:
   '/api/students/{id}/images':
     parameters:
       - schema:
-          type: string
+          type: integer
+          format: int64
         name: id
         in: path
         required: true
@@ -467,12 +468,13 @@ paths:
           multipart/form-data:
             schema:
               type: object
-              properties:
+              properties:            
                 fileName:
                   type: string
                 content:
                   type: string
                   format: binary
+            examples: {}
         description: ''
   '/api/images/{id}':
     parameters:

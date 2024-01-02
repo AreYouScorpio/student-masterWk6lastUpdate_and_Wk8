@@ -3,6 +3,7 @@ package hu.webuni.student.web;
 import hu.webuni.student.api.StudentControllerApi;
 import hu.webuni.student.api.model.StudentDto;
 import hu.webuni.student.mapper.StudentMapper;
+import hu.webuni.student.model.Image;
 import hu.webuni.student.model.Student;
 import hu.webuni.student.service.StudentService;
 import jakarta.validation.Valid;
@@ -15,6 +16,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -91,7 +95,31 @@ public class StudentController implements StudentControllerApi {
     }
 
     @Override
-    public ResponseEntity<String> uploadImageForStudent(String id, String fileName, MultipartFile content) {
-    return null;
+    public ResponseEntity<String> uploadImageForStudent(Long id, String fileName, MultipartFile content)  {
+        try {
+            byte[] imageData = readImageData(content.getInputStream());
+        Image image = studentService.saveImageForStudent(id, fileName, imageData);
+        return  ResponseEntity.ok("/api/images/" + image.getId());}
+        catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
+
+    private byte[] readImageData(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+        int nRead;
+        byte[] data = new byte[1024];
+        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+
+        buffer.flush();
+        return buffer.toByteArray();
+    }
+
+
+
+
 }
