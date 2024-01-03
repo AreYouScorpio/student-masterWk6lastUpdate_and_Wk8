@@ -285,7 +285,7 @@ public class CourseController implements CourseControllerApi {
  */
 
     @Override
-    public ResponseEntity<Void> reportMessage(Long id, String messages ) {
+    public ResponseEntity<Void> reportMessage(Long id, String messages) {
         this.messagingTemplate.convertAndSend("/topic/course/" + id, new CourseMessage(messages, OffsetDateTime.now()));
         return ResponseEntity.ok().build();
     }
