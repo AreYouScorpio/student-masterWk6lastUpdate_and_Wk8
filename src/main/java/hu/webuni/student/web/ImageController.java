@@ -1,23 +1,21 @@
 package hu.webuni.student.web;
 
 import hu.webuni.student.api.ImageControllerApi;
-import hu.webuni.student.model.Image;
 import hu.webuni.student.model.Student;
 import hu.webuni.student.repository.ImageRepository;
 import hu.webuni.student.repository.StudentRepository;
-import javassist.bytecode.ByteArray;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,28 +30,46 @@ public class ImageController implements ImageControllerApi {
 
     private final StudentRepository studentRepository;
 
-
     @Override
     public ResponseEntity<Resource> downloadImage(Long id) {
-        Optional<String> imageLocationOptional = getImageLocationForStudent(id);
+        String filePath = getImageLocationForStudent(id).get().toString();
 
-        if (imageLocationOptional.isEmpty()) {
-            System.out.println("No image exists");
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (filePath == null || !Files.exists(Paths.get(filePath))) {
+            return ResponseEntity.notFound().build();
         }
 
-        String imageLocation = imageLocationOptional.get();
-        Path imageFilePath = Paths.get(imageLocation);
+        try {
+            // Open an input stream to the file
+            FileInputStream inputStream = new FileInputStream(filePath);
 
-        if (Files.exists(imageFilePath) && Files.isReadable(imageFilePath)) {
-            Resource resource = new FileSystemResource(imageFilePath.toFile());
+            // Create a byte buffer for streaming with a size of 1024 bytes
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            // Create response headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=image.jpg");
+            headers.setContentType(MediaType.IMAGE_JPEG);
+
+            // Create a ByteArrayResource to store the streamed content in memory
+            ByteArrayResource resource = new ByteArrayResource(new byte[0]);
+
+            // Read the file content into the buffer and append it to the ByteArrayResource
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                byte[] currentBuffer = new byte[bytesRead];
+                System.arraycopy(buffer, 0, currentBuffer, 0, bytesRead);
+                //buffer: source array from which data will be copied
+                //srcPos: starting position in the source array from where the data will be copied
+                //currentBuffer: destination array
+                //destPos: starting position in the destination array where the data will be copied
+                resource = concatenateByteArrayResources(resource, new ByteArrayResource(currentBuffer));
+            }
 
             return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_JPEG)
+                    .headers(headers)
                     .body(resource);
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null); // Or handle the error differently
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -65,6 +81,16 @@ public class ImageController implements ImageControllerApi {
             return Optional.ofNullable(student.getImageLocation());
         }
         return Optional.empty();
+    }
+
+    // Method to concatenate ByteArrayResources
+    private ByteArrayResource concatenateByteArrayResources(ByteArrayResource resource1, ByteArrayResource resource2) {
+        byte[] byteArray1 = resource1.getByteArray();
+        byte[] byteArray2 = resource2.getByteArray();
+        byte[] result = new byte[byteArray1.length + byteArray2.length];
+        System.arraycopy(byteArray1, 0, result, 0, byteArray1.length);
+        System.arraycopy(byteArray2, 0, result, byteArray1.length, byteArray2.length);
+        return new ByteArrayResource(result);
     }
 
 

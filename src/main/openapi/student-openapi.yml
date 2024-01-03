@@ -487,11 +487,18 @@ paths:
     get:
       tags:
         - image-controller
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
           content:
-            image/jpeg:
+            application/octet-stream:
               schema:
                 type: string
                 format: binary
