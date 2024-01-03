@@ -511,6 +511,27 @@ paths:
                 type: string
                 format: binary
       operationId: downloadImage
+  '/api/courses/{id}/messages/{messages}':
+    parameters:
+      - schema:
+          type: integer
+          format: int64
+        name: id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: messages
+        in: path
+        required: true
+    put:
+      summary: ''
+      operationId: reportMessage
+      responses:
+        '200':
+          description: OK
+      tags:
+        - course-controller
 components:
   schemas:
     TeacherDto:

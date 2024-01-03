@@ -10,6 +10,7 @@ import hu.webuni.student.model.Course;
 import hu.webuni.student.model.HistoryData;
 import hu.webuni.student.repository.CourseRepository;
 import hu.webuni.student.service.CourseService;
+import hu.webuni.student.ws.CourseMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
@@ -20,6 +21,7 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.data.web.querydsl.QuerydslPredicateArgumentResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -29,6 +31,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -45,6 +48,8 @@ public class CourseController implements CourseControllerApi {
     private final PageableHandlerMethodArgumentResolver pageableResolver;
 
     private final QuerydslPredicateArgumentResolver predicateResolver;
+
+    private final SimpMessagingTemplate messagingTemplate;
     @Autowired
     CourseService courseService;
 
@@ -278,4 +283,10 @@ public class CourseController implements CourseControllerApi {
 
 
  */
+
+    @Override
+    public ResponseEntity<Void> reportMessage(Long id, String messages) {
+        this.messagingTemplate.convertAndSend("/topic/course/" + id, new CourseMessage(messages, OffsetDateTime.now()));
+        return ResponseEntity.ok().build();
+    }
 }
