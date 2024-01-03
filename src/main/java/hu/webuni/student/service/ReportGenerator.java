@@ -2,13 +2,12 @@ package hu.webuni.student.service;
 
 import hu.webuni.student.model.Course;
 import hu.webuni.student.model.Student;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.OptionalDouble;
+import java.util.concurrent.CompletableFuture;
 
 
 @Service
@@ -23,7 +22,9 @@ public class ReportGenerator {
 
 
     Double averageSemester;
-    public String getReport(long id) {
+    //@Async
+    //public CompletableFuture<Double> getReportAverage(long id) {
+    public Double getReportAverage(long id) {
 
 
         System.out.println("Report generator called. [ReportGenerator.getReport] at thread " +
@@ -40,13 +41,15 @@ public class ReportGenerator {
                 .mapToInt(Student::getSemester) // Assuming 'getSemester' method returns the semester
                 .average();
 
+        System.out.println("Report done for CourseId " + id + ".");
         if (averageSemester.isPresent()) {
             double average = averageSemester.getAsDouble();
-            System.out.println("Average semester: " + average);
+            System.out.println("Average semester: " + average + "\n");
         } else {
-            System.out.println("No students in the course.");
+            System.out.println("No students in the course.\n");
         }
 
-        return "Report done for CourseId " + id + "\n ..the average of all enrolled student's semester is: " + averageSemester.getAsDouble();
+        //return CompletableFuture.completedFuture(averageSemester.getAsDouble());
+        return averageSemester.getAsDouble();
     }
 }
