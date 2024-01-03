@@ -1,5 +1,6 @@
 package hu.webuni.student;
 
+import hu.webuni.student.service.DeleteImageDirectory;
 import hu.webuni.student.service.InitDbService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class StudentApplication implements CommandLineRunner{
 	@Autowired
 	InitDbService initDbService;
 
+	@Autowired
+	DeleteImageDirectory deleteImageDirectory;
+
 	public static void main(String[] args) {
 		SpringApplication.run(StudentApplication.class, args);
 	}
@@ -42,6 +46,9 @@ public class StudentApplication implements CommandLineRunner{
 //		initDbService.deleteAudTables();
 
 		initDbService.addInitData();
+
+		deleteImageDirectory.deleteAllFiles(); // delete image directory while starting app
+
 
 
 
