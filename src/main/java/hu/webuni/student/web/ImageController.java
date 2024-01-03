@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Optional;
 
 @RestController
@@ -38,32 +39,18 @@ public class ImageController implements ImageControllerApi {
             return ResponseEntity.notFound().build();
         }
 
-        try {
-            // Open an input stream to the file
-            FileInputStream inputStream = new FileInputStream(filePath);
-
-            // Create a byte buffer for streaming with a size of 1024 bytes
+        try (FileInputStream inputStream = new FileInputStream(filePath)) {
             byte[] buffer = new byte[1024];
             int bytesRead;
+            ByteArrayResource resource = new ByteArrayResource(new byte[0]);
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                byte[] currentBuffer = Arrays.copyOfRange(buffer, 0, bytesRead);
+                resource = concatenateByteArrayResources(resource, new ByteArrayResource(currentBuffer));
+            }
 
-            // Create response headers
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=image.jpg");
             headers.setContentType(MediaType.IMAGE_JPEG);
-
-            // Create a ByteArrayResource to store the streamed content in memory
-            ByteArrayResource resource = new ByteArrayResource(new byte[0]);
-
-            // Read the file content into the buffer and append it to the ByteArrayResource
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                byte[] currentBuffer = new byte[bytesRead];
-                System.arraycopy(buffer, 0, currentBuffer, 0, bytesRead);
-                //buffer: source array from which data will be copied
-                //srcPos: starting position in the source array from where the data will be copied
-                //currentBuffer: destination array
-                //destPos: starting position in the destination array where the data will be copied
-                resource = concatenateByteArrayResources(resource, new ByteArrayResource(currentBuffer));
-            }
 
             return ResponseEntity.ok()
                     .headers(headers)
@@ -78,6 +65,7 @@ public class ImageController implements ImageControllerApi {
         Optional<Student> studentOptional = studentRepository.findById(id);
         if (studentOptional.isPresent()) {
             Student student = studentOptional.get();
+            System.out.println(Optional.ofNullable(student.getImageLocation()));
             return Optional.ofNullable(student.getImageLocation());
         }
         return Optional.empty();
