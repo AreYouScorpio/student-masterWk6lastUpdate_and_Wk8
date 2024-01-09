@@ -25,10 +25,7 @@ import jakarta.persistence.PersistenceContext;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -353,6 +350,8 @@ public class CourseService {
         return timestamp;
     }
 
+
+
     @Transactional
     @SuppressWarnings({"rawtypes", "unchecked"})
     public HistoryData<Course> getCourseStatusByDateOnlyValid(long id, LocalDateTime date) throws Throwable {
@@ -362,6 +361,8 @@ public class CourseService {
 
         System.out.println("A lista merete: " + resultList.size());
 
+        // sorted version:
+        resultList.sort(Comparator.comparing(h -> h.getDate()));
         HistoryData<Course> result = new HistoryData<Course>();
 
         if (resultList.size()>0) result
@@ -370,6 +371,9 @@ public class CourseService {
 
         return result;
     }
+
+
+
 
 
 
