@@ -362,12 +362,19 @@ public class CourseService {
         System.out.println("A lista merete: " + resultList.size());
 
         // sorted version:
-        resultList.sort(Comparator.comparing(h -> h.getDate()));
+
+        // Create a new modifiable list and sort it
+        List<HistoryData<Course>> sortedResultList = new ArrayList<>(resultList);
+        sortedResultList.sort(Comparator.comparing(h -> h.getDate()));
+
         HistoryData<Course> result = new HistoryData<Course>();
 
-        if (resultList.size()>0) result
-        = resultList.get(resultList.size()-1);
-
+        //old, unsorted one:
+        //if (resultList.size()>0) result = resultList.get(resultList.size()-1);
+        //sorted one:
+        if (!sortedResultList.isEmpty()) {
+            result = sortedResultList.get(sortedResultList.size() - 1);
+        }
 
         return result;
     }
