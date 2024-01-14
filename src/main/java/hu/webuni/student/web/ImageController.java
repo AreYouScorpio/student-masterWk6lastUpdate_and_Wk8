@@ -83,6 +83,7 @@ public class ImageController implements ImageControllerApi {
         return Optional.empty();
     }
 
+    /* OLD start ->
     // Method to concatenate ByteArrayResources
     private ByteArrayResource concatenateByteArrayResources(ByteArrayResource resource1, ByteArrayResource resource2) {
         byte[] byteArray1 = resource1.getByteArray();
@@ -92,7 +93,7 @@ public class ImageController implements ImageControllerApi {
         System.arraycopy(byteArray2, 0, result, byteArray1.length, byteArray2.length);
         return new ByteArrayResource(result);
     }
-
+    -> end OLD */
 
 
 }
