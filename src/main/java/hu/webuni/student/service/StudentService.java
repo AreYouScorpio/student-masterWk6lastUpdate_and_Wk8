@@ -11,13 +11,22 @@ import hu.webuni.student.repository.ImageRepository;
 import hu.webuni.student.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -173,7 +182,19 @@ public class StudentService {
 
 
     @Transactional
-    public Image saveImageForStudent(long studentId, String fileName, byte[] bytes) {
+    //OLD public Image saveImageForStudent(long studentId, String fileName, byte[] bytes) {
+    public void saveImageForStudent(long studentId, String fileName, InputStream bytes) {
+
+        if (!studentRepository.existsById(studentId)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        try{
+            Student student = studentRepository.findById(studentId).get();
+            Files.copy(bytes, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);}
+        catch (IOException e){
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        /* OLD starts ->
         Student student = studentRepository.findById(studentId).get();
         Image image = Image.builder()
                 .data(bytes)
@@ -182,6 +203,9 @@ public class StudentService {
         image = imageRepository.save(image);
         student.setImage(image);
         return image;
+
+        -> OLD ends */
+
 
     }
 

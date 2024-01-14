@@ -16,7 +16,7 @@ public class ChatController {
     public void send(ChatMessage message) throws Exception{
         messagingTemplate.convertAndSend(
                 "/topic/courseChat/" + message.getCourseId(),
-                String.format("%s: %s", message.getSender(), message.getText()));
+                String.format("%s: %s :%s", message.getSender(), message.getText(), message.getTimestamp()));
 
     }
 

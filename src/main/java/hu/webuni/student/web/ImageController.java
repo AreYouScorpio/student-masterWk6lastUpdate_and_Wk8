@@ -6,6 +6,7 @@ import hu.webuni.student.repository.ImageRepository;
 import hu.webuni.student.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.FileInputStream;
@@ -33,7 +35,15 @@ public class ImageController implements ImageControllerApi {
 
     @Override
     public ResponseEntity<Resource> downloadImage(Long id) {
+        System.out.println("Downloading picture..");
         String filePath = getImageLocationForStudent(id).get().toString();
+        System.out.println("This is the filepath for download: " + filePath);
+
+        FileSystemResource fileSystemResource =  new FileSystemResource(Paths.get(filePath));
+        //if (!fileSystemResource.exists()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok(fileSystemResource);
+
+        /* OLD start ->
 
         if (filePath == null || !Files.exists(Paths.get(filePath))) {
             return ResponseEntity.notFound().build();
@@ -58,6 +68,8 @@ public class ImageController implements ImageControllerApi {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+        -> OLD END
+         */
     }
 
     // Method to get student's image location for a student from DB

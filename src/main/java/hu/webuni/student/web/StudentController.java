@@ -116,7 +116,7 @@ public class StudentController implements StudentControllerApi {
 
         try {
             String filePath = getResourceFilePath(fileName);
-            File targetFile = new File(filePath);
+            //old -> File targetFile = new File(filePath);
 
             // Check if an image already exists for the student
             String existingImagePath = studentService.getImageLocationForStudent(id);
@@ -134,6 +134,8 @@ public class StudentController implements StudentControllerApi {
                 }
             }
 
+
+            /* OLD start ->
             // Save the new file to the server
             try (InputStream inputStream = content.getInputStream();
                  OutputStream outputStream = new FileOutputStream(targetFile)) {
@@ -144,6 +146,16 @@ public class StudentController implements StudentControllerApi {
                     outputStream.write(buffer, 0, bytesRead);
                 }
             }
+            -> OLD end
+            */
+
+
+            //NEW uploader:
+
+            studentService.saveImageForStudent(id,filePath, content.getInputStream());
+
+
+
 
             // Save the new file location into the database for the student
             studentService.saveImageLocationForStudent(id, filePath);
