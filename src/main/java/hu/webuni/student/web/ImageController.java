@@ -40,7 +40,7 @@ public class ImageController implements ImageControllerApi {
         System.out.println("This is the filepath for download: " + filePath);
 
         FileSystemResource fileSystemResource =  new FileSystemResource(Paths.get(filePath));
-        //if (!fileSystemResource.exists()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (!fileSystemResource.exists()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         return ResponseEntity.ok(fileSystemResource);
 
         /* OLD start ->
