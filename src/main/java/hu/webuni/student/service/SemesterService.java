@@ -2,6 +2,8 @@ package hu.webuni.student.service;
 
 import hu.webuni.student.aspect.Retry;
 import hu.webuni.student.error.ErrorDecision;
+import hu.webuni.student.wsclient.CentralsystemXmlWs;
+import hu.webuni.student.wsclient.CentralsystemXmlWsImplService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +26,13 @@ public class SemesterService {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
         }
+        // local version:
         int result = random.nextInt(0, 6);
-
+        System.out.println("FreeSemester(s) got from SemesterService/getFreeSemester locally: " + result);
+        // remote version / XML from centralSystem server on 8081:
+        CentralsystemXmlWs centralsystemXmlWsImplPort = new CentralsystemXmlWsImplService().getCentralsystemXmlWsImplPort(); // a port az interface szinonimaja a wsdl-ben
+        result = centralsystemXmlWsImplPort.getFreeSemesterByCentralId(1);
+        System.out.println("FreeSemester(s) got from centralSystem remotely: " + result);
 
         //for testing, mocking testNumber++:
 
