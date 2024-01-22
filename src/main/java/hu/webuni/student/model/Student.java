@@ -38,6 +38,8 @@ public class Student {
     private int centralId;
     private int freeSemester;
 
+    private int cashPaidIn;
+
     @OneToOne
     @JoinColumn(name = "id") //idegen kulcs a masik oldalon ez legyen
     private Image image;
