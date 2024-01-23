@@ -27,7 +27,7 @@ public class UserDetailService implements UserDetailsService {
         return new User(username,
                 appUser.getPassword(),
                 appUser.getRoles().stream()
-                        .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
+                        .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList()));
     }
 }

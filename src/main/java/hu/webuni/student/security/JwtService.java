@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import hu.webuni.student.model.AppUser;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,24 +32,13 @@ public class JwtService {
                 .withIssuer(ISSUER)
                 .sign(alg);
     }
-
     public UserDetails parseJwt(String jwtToken) {
 
         DecodedJWT decodedJwt = JWT.require(alg)
                 .withIssuer(ISSUER)
                 .build()
                 .verify(jwtToken);
-
-
-        // igy jo?
-
-        Set<GrantedAuthority> authorities = decodedJwt.getClaim(AUTH).asList(String.class)
-                .stream()
-                .map(SimpleGrantedAuthority::new)
-                .map(a -> (GrantedAuthority) a) // Cast to GrantedAuthority
-                .collect(Collectors.toSet());
-
-        return (UserDetails) new AppUser(decodedJwt.getSubject(), "dummy_barmi_lehet", authorities); // user jelszó kéne, de mivel most végezzük az autentikációt, később úgysem használjuk, de am később innét tudná
+        return new User(decodedJwt.getSubject(), "dummy_barmi_lehet", decodedJwt.getClaim(AUTH).asList(String.class).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList())); // user jelszó kéne, de mivel most végezzük az autentikációt, később úgysem használjuk, de am később innét tudná
     }
 
 

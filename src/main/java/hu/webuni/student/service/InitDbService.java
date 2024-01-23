@@ -92,7 +92,8 @@ public class InitDbService {
     }
 
 
-    //new:
+    //mukodik, de nem enged be:
+    /*
     @Transactional
     public void createUsersIfNeeded() {
         if (!userRepository.existsById("admin")) {
@@ -109,8 +110,10 @@ public class InitDbService {
         }
     }
 
-    //old:
-    /*
+     */
+
+    //nem mukodik, de regen ezzel mukodott:
+
     @Transactional
     public void createUsersIfNeeded() {
 
@@ -133,7 +136,7 @@ public class InitDbService {
 
     }
 
-     */
+
 
 }
 

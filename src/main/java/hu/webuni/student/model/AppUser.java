@@ -22,7 +22,7 @@ public class AppUser {
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<GrantedAuthority> roles;
+    private Set<String> roles;
 
 
 
