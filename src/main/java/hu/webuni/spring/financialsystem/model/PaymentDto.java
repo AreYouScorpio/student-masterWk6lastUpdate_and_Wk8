@@ -7,7 +7,7 @@ import lombok.Data;
 //it has to bi in the same packages as it is in the sender (@financialsystem)
 @Data
 @AllArgsConstructor
-public class Payment {
+public class PaymentDto {
     long studentId;
     int cashPaidIn;
 }

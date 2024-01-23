@@ -3,12 +3,15 @@ package hu.webuni.student.service;
 import hu.webuni.student.model.Course;
 import hu.webuni.student.model.Student;
 import hu.webuni.student.model.Teacher;
+import hu.webuni.student.model.User;
 import hu.webuni.student.repository.CourseRepository;
 import hu.webuni.student.repository.StudentRepository;
 import hu.webuni.student.repository.TeacherRepository;
+import hu.webuni.student.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +36,12 @@ public class InitDbService {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    UserRepository userRepository;
 
 
     @Transactional
@@ -79,6 +88,29 @@ public class InitDbService {
         jdbcTemplate.update("DELETE FROM course_aud");
         jdbcTemplate.update("DELETE FROM student_aud");
         jdbcTemplate.update("DELETE FROM teacher_aud");
+    }
+
+
+    @Transactional
+    public void createUsersIfNeeded() {
+
+
+        if(!userRepository.existsById("admin")) {
+            userRepository.save(
+                    new User("admin", passwordEncoder.encode("pass"),
+                            Set.of("admin", "user") ));}
+        if(!userRepository.existsById("user")) {
+            userRepository.save(
+                    new User("user",
+                            passwordEncoder.encode("pass"),
+                            Set.of("user") ));}
+        if(!userRepository.existsById("akos")) {
+            userRepository.save(
+                    new User("akos",
+                            passwordEncoder.encode("Almira123"),
+                            Set.of("admin", "user") ));}
+
+
     }
 
 }

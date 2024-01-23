@@ -1,6 +1,6 @@
 package hu.webuni.student.jms;
 
-import hu.webuni.spring.financialsystem.model.Payment;
+import hu.webuni.spring.financialsystem.model.PaymentDto;
 import hu.webuni.student.model.Student;
 import hu.webuni.student.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class PaymentMessageConsumer {
     //behivatkozni jmsconfigbol, ami a csatlakozast biztositja factory (myFactory)
     @JmsListener(destination = "payments", containerFactory = "myFactory")
     //queue or topic name (the same at financialsystem) //ehhez meg kell egy converter is, h Payment object-et tudjon gyartani
-    public void onPaymentMessage(Payment paymentMessage) {
+    public void onPaymentMessage(PaymentDto paymentMessage) {
         System.out.println("This is the paymentMessage: " + paymentMessage.toString() + " values: " + paymentMessage.getStudentId() + "  " + paymentMessage.getCashPaidIn());
 
 
