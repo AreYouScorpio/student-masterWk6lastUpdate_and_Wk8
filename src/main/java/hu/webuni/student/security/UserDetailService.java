@@ -18,14 +18,16 @@ public class UserDetailService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
-
-    // this will prepare user object for spring security from DB:
+    // This will prepare a user object for Spring Security from the database
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AppUser appUser = userRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        AppUser appUser = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
         return new User(username,
                 appUser.getPassword(),
-                appUser.getRoles().stream().map(SimpleGrantedAuthority::new)
+                appUser.getRoles().stream()
+                        .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
                         .collect(Collectors.toList()));
     }
 }

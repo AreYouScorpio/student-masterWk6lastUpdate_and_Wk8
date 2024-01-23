@@ -11,6 +11,7 @@ import hu.webuni.student.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,6 +92,25 @@ public class InitDbService {
     }
 
 
+    //new:
+    @Transactional
+    public void createUsersIfNeeded() {
+        if (!userRepository.existsById("admin")) {
+            userRepository.save(new AppUser("admin", passwordEncoder.encode("pass"),
+                    Set.of(new SimpleGrantedAuthority("admin"), new SimpleGrantedAuthority("user"))));
+        }
+        if (!userRepository.existsById("user")) {
+            userRepository.save(new AppUser("user", passwordEncoder.encode("pass"),
+                    Set.of(new SimpleGrantedAuthority("user"))));
+        }
+        if (!userRepository.existsById("akos")) {
+            userRepository.save(new AppUser("akos", passwordEncoder.encode("Almira123"),
+                    Set.of(new SimpleGrantedAuthority("admin"), new SimpleGrantedAuthority("user"))));
+        }
+    }
+
+    //old:
+    /*
     @Transactional
     public void createUsersIfNeeded() {
 
@@ -112,6 +132,8 @@ public class InitDbService {
 
 
     }
+
+     */
 
 }
 
