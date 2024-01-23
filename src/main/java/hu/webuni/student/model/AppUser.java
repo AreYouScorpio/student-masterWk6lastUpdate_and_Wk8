@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Set;
 
@@ -14,13 +15,16 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class AppUser {
 
     @Id
     private String username;
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles;
+    private Set<GrantedAuthority> roles;
+
+
+
 
 }

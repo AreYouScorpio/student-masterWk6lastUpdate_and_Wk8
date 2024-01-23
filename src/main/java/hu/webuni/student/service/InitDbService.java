@@ -3,7 +3,7 @@ package hu.webuni.student.service;
 import hu.webuni.student.model.Course;
 import hu.webuni.student.model.Student;
 import hu.webuni.student.model.Teacher;
-import hu.webuni.student.model.User;
+import hu.webuni.student.model.AppUser;
 import hu.webuni.student.repository.CourseRepository;
 import hu.webuni.student.repository.StudentRepository;
 import hu.webuni.student.repository.TeacherRepository;
@@ -97,16 +97,16 @@ public class InitDbService {
 
         if(!userRepository.existsById("admin")) {
             userRepository.save(
-                    new User("admin", passwordEncoder.encode("pass"),
+                    new AppUser("admin", passwordEncoder.encode("pass"),
                             Set.of("admin", "user") ));}
         if(!userRepository.existsById("user")) {
             userRepository.save(
-                    new User("user",
+                    new AppUser("user",
                             passwordEncoder.encode("pass"),
                             Set.of("user") ));}
         if(!userRepository.existsById("akos")) {
             userRepository.save(
-                    new User("akos",
+                    new AppUser("akos",
                             passwordEncoder.encode("Almira123"),
                             Set.of("admin", "user") ));}
 
