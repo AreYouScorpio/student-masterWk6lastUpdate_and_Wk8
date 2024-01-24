@@ -48,6 +48,8 @@ public class StudentApplication implements CommandLineRunner{
 //		initDbService.deleteAudTables();
 
 		initDbService.addInitData();
+		initDbService.createUsersIfNeeded();
+
 
 		deleteImageDirectory.deleteAllFiles(); // delete image directory while starting app
 
