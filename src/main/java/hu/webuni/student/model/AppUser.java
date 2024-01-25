@@ -1,23 +1,35 @@
 package hu.webuni.student.model;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
 @Data
+@Audited
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppUser {
+public abstract class AppUser {
+
+
+    public enum UserType {
+        TEACHER, STUDENT;
+    }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToString.Include
+    @EqualsAndHashCode.Include
+    private long id;
+
+    private String name;
+
+    private LocalDate birthdate;
+
     private String username;
     private String password;
 
@@ -25,6 +37,6 @@ public class AppUser {
     private Set<String> roles;
 
 
-
+    public abstract UserType getUserType();
 
 }

@@ -6,6 +6,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+
 @Controller
 @RequiredArgsConstructor
 public class ChatController {
@@ -21,3 +22,26 @@ public class ChatController {
     }
 
 }
+
+
+/* @Controller
+@RequiredArgsConstructor
+public class ChatController {
+
+    private final SimpMessagingTemplate messagingTemplate;
+
+    @MessageMapping("/chat")
+    public void send(Principal principal, ChatMessage message) throws Exception {
+        // Access authentication details
+        Authentication authentication = (Authentication) principal;
+        Jwt jwt = (Jwt) authentication.getCredentials();
+
+        // Extract user information from JWT
+        String username = jwt.getClaim("username");
+
+        messagingTemplate.convertAndSend(
+                "/topic/courseChat/" + message.getCourseId(),
+                String.format("%s: %s :%s", username, message.getText(), message.getTimestamp()));
+    }
+}
+*/

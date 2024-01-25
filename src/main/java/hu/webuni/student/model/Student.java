@@ -20,19 +20,22 @@ import java.util.Set;
 @Audited
 @Getter
 @Setter
-public class Student {
+public class Student extends AppUser{
 
-    @Id
-    @GeneratedValue // (strategy = GenerationType.AUTO)
-    @ToString.Include
-    @EqualsAndHashCode.Include()
-    private long id;
+    //@Id
+    //@GeneratedValue // (strategy = GenerationType.AUTO)
+    //@ToString.Include
+    //@EqualsAndHashCode.Include()
+    //private long id;
 
     @ToString.Include
     //@Size(min = 3, max = 20)
     private String name;
     //@Size (min = 3, max = 10)
     private LocalDate birthdate;
+
+    @ManyToMany(mappedBy = "students")
+    private Set<Course> courses;
     private int semester;
 
     private int centralId;
@@ -41,13 +44,12 @@ public class Student {
     private int cashPaidIn;
 
     @OneToOne
-    @JoinColumn(name = "id") //idegen kulcs a masik oldalon ez legyen
+    //@JoinColumn(name = "id") //idegen kulcs a masik oldalon ez legyen
+    @JoinColumn(name = "image_id") //idegen kulcs a masik oldalon ez legyen // ne legyen id, m osszeutkozik, mar van egy id-nk
     private Image image;
 
     private String imageLocation;
 
-    @ManyToMany(mappedBy = "students")
-    private Set<Course> courses;
 
 
 
@@ -57,5 +59,8 @@ public class Student {
         this.semester = semester;
     }
 
-
+    @Override
+    public UserType getUserType() {
+        return UserType.STUDENT;
+    }
 }

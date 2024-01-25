@@ -20,14 +20,20 @@ public class JwtService {
 
     public static final String ISSUER = "StudentApp";
     public static final String AUTH = "auth";
+    public static final String COURSE_IDS = "courseIds";
     private Algorithm alg = Algorithm.HMAC256("mysecret");
 
     public String createJwtToken(UserDetails principal) {
+
+        UserInfo userInfo = (UserInfo) principal; //ezt az infot is mar belepakoljuk
 
         return JWT.create()
                 .withSubject(principal.getUsername())
                 .withArrayClaim(AUTH,
                         principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new))
+                .withArrayClaim(
+                        COURSE_IDS, userInfo.getCourseIds().toArray(Integer[]::new) //ezt az infot is mar belepakoljuk
+                )
                 .withExpiresAt(new Date(System.currentTimeMillis()+ TimeUnit.MINUTES.toMillis(20)))
                 .withIssuer(ISSUER)
                 .sign(alg);
@@ -38,7 +44,9 @@ public class JwtService {
                 .withIssuer(ISSUER)
                 .build()
                 .verify(jwtToken);
-        return new User(decodedJwt.getSubject(), "dummy_barmi_lehet", decodedJwt.getClaim(AUTH).asList(String.class).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList())); // user jelszó kéne, de mivel most végezzük az autentikációt, később úgysem használjuk, de am később innét tudná
+       // return new User(decodedJwt.getSubject(), "dummy_barmi_lehet", decodedJwt.getClaim(AUTH).asList(String.class).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList())); // user jelszó kéne, de mivel most végezzük az autentikációt, később úgysem használjuk, de am később innét tudná
+        return new UserInfo(decodedJwt.getSubject(), "dummy_barmi_lehet", decodedJwt.getClaim(AUTH).asList(String.class).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()),
+                decodedJwt.getClaim(COURSE_IDS).asList(Integer.class)); // user jelszó kéne, de mivel most végezzük az autentikációt, később úgysem használjuk, de am később innét tudná
     }
 
 

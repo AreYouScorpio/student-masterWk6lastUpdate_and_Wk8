@@ -3,7 +3,6 @@ package hu.webuni.student.service;
 import hu.webuni.student.model.Course;
 import hu.webuni.student.model.Student;
 import hu.webuni.student.model.Teacher;
-import hu.webuni.student.model.AppUser;
 import hu.webuni.student.repository.CourseRepository;
 import hu.webuni.student.repository.StudentRepository;
 import hu.webuni.student.repository.TeacherRepository;
@@ -11,7 +10,6 @@ import hu.webuni.student.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,7 +83,7 @@ public class InitDbService {
     }
 
     @Transactional
-    public void deleteAudTables(){
+    public void deleteAudTables() {
         jdbcTemplate.update("DELETE FROM course_aud");
         jdbcTemplate.update("DELETE FROM student_aud");
         jdbcTemplate.update("DELETE FROM teacher_aud");
@@ -117,6 +115,7 @@ public class InitDbService {
     @Transactional
     public void createUsersIfNeeded() {
 
+        /* old
 
         if(!userRepository.existsById("admin")) {
             userRepository.save(
@@ -136,8 +135,29 @@ public class InitDbService {
 
     }
 
+         */
 
+        //new:
+        if (!userRepository.existsByUsername("admin")) {
+            Teacher adminTeacher = new Teacher("admin", LocalDate.of(1990, 1, 1));
+            adminTeacher.setPassword(passwordEncoder.encode("pass"));
+            adminTeacher.setRoles(Set.of("admin", "user"));
+            teacherRepository.save(adminTeacher);
+        }
+        if (!userRepository.existsByUsername("user")) {
+            Student userStudent = new Student("user", LocalDate.of(1995, 1, 1), 1);
+            userStudent.setPassword(passwordEncoder.encode("pass"));
+            userStudent.setRoles(Set.of("user"));
+            studentRepository.save(userStudent);
+        }
+        if (!userRepository.existsByUsername("akos")) {
+            Teacher akosTeacher = new Teacher("akos", LocalDate.of(1985, 1, 1));
+            akosTeacher.setPassword(passwordEncoder.encode("Almira123"));
+            akosTeacher.setRoles(Set.of("admin", "user"));
+            teacherRepository.save(akosTeacher);
+        }
 
+    }
 }
 
 
