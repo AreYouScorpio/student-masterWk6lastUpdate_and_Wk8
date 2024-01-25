@@ -7,11 +7,11 @@ import hu.webuni.student.model.Teacher;
 import hu.webuni.student.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -25,6 +25,7 @@ public class AppUserDetailService implements UserDetailsService {
 
     // This will prepare a user object for Spring Security from the database
     @Override
+    @Transactional // kurzusok tobbes kapcsolata meg nincs betoltve (lazy) es nem tranzakcionalis volt, igy hiba dobodik
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AppUser appUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));

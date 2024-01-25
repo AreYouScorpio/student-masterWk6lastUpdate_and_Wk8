@@ -1,6 +1,7 @@
 package hu.webuni.student.model;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.envers.Audited;
 
 import jakarta.persistence.*;
@@ -12,8 +13,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@SuperBuilder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @ToString(onlyExplicitlyIncluded = true)
 @Entity
 @Cacheable
@@ -22,18 +23,16 @@ import java.util.Set;
 @Setter
 public class Student extends AppUser{
 
-    //@Id
-    //@GeneratedValue // (strategy = GenerationType.AUTO)
-    //@ToString.Include
-    //@EqualsAndHashCode.Include()
-    //private long id;
 
+    /*
     @ToString.Include
     //@Size(min = 3, max = 20)
     private String name;
     //@Size (min = 3, max = 10)
     private LocalDate birthdate;
 
+
+     */
     @ManyToMany(mappedBy = "students")
     private Set<Course> courses;
     private int semester;
@@ -43,6 +42,13 @@ public class Student extends AppUser{
 
     private int cashPaidIn;
 
+    /*
+    @OneToOne
+    @JoinColumn(name = "app_user_id")
+    private AppUser appUser;
+
+
+     */
     @OneToOne
     //@JoinColumn(name = "id") //idegen kulcs a masik oldalon ez legyen
     @JoinColumn(name = "image_id") //idegen kulcs a masik oldalon ez legyen // ne legyen id, m osszeutkozik, mar van egy id-nk
@@ -52,12 +58,16 @@ public class Student extends AppUser{
 
 
 
-
+/*
     public Student(String name, LocalDate birthdate, int semester) {
         this.name = name;
         this.birthdate = birthdate;
         this.semester = semester;
     }
+
+
+ */
+
 
     @Override
     public UserType getUserType() {

@@ -2,6 +2,7 @@ package hu.webuni.student.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -13,6 +14,8 @@ import java.util.Set;
 @Audited
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class AppUser {
 
 
@@ -21,7 +24,7 @@ public abstract class AppUser {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue//(strategy = GenerationType.IDENTITY)
     @ToString.Include
     @EqualsAndHashCode.Include
     private long id;
@@ -32,6 +35,12 @@ public abstract class AppUser {
 
     private String username;
     private String password;
+
+    /*
+    @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL)
+    private Student student;
+
+     */
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles;
