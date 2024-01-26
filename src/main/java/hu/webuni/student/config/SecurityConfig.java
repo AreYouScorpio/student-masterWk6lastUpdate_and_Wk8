@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,7 +36,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
+/*
     //USERS
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
@@ -43,6 +44,8 @@ public class SecurityConfig {
         return authManagerBuilder.authenticationProvider(authenticationProvider()).build();
     }
 
+
+ */
     //RULES
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -73,6 +76,12 @@ public class SecurityConfig {
             return http.build();
         }
 
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConf) throws Exception {
+        return authConf.getAuthenticationManager();
+    }
+        /*
         @Bean
         public AuthenticationProvider authenticationProvider() {
             DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
@@ -80,6 +89,8 @@ public class SecurityConfig {
             daoAuthenticationProvider.setUserDetailsService(userDetailsService);
             return daoAuthenticationProvider;
         }
+
+         */
 
 }
 

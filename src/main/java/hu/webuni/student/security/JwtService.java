@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -27,12 +28,15 @@ public class JwtService {
 
         UserInfo userInfo = (UserInfo) principal; //ezt az infot is mar belepakoljuk
 
+        List<Integer> courseIds = userInfo.getCourseIds();
+
+
         return JWT.create()
                 .withSubject(principal.getUsername())
                 .withArrayClaim(AUTH,
                         principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new))
                 .withArrayClaim(
-                        COURSE_IDS, userInfo.getCourseIds().toArray(Integer[]::new) //ezt az infot is mar belepakoljuk
+                        COURSE_IDS, courseIds == null ? new Integer[0] : courseIds.toArray(Integer[]::new) //ezt az infot is mar belepakoljuk
                 )
                 .withExpiresAt(new Date(System.currentTimeMillis()+ TimeUnit.MINUTES.toMillis(20)))
                 .withIssuer(ISSUER)
