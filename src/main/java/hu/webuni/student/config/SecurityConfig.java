@@ -57,10 +57,10 @@ public class SecurityConfig {
                     )
                     //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     //.and()
-                    .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    //.sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(auth -> auth
-                            //.requestMatchers("/oauth2/**").permitAll()
-                            //.requestMatchers("/fbLoginSuccess").permitAll()
+                            .requestMatchers("/oauth2/**").permitAll()
+                            .requestMatchers("/fbLoginSuccess").permitAll()
                             .requestMatchers("/api/login/**").permitAll()
                             .requestMatchers("/api/stomp/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/courses/**").hasAuthority("TEACHER")

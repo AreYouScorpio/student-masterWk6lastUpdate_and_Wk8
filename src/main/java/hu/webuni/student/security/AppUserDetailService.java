@@ -5,6 +5,7 @@ import hu.webuni.student.model.Course;
 import hu.webuni.student.model.Student;
 import hu.webuni.student.model.Teacher;
 import hu.webuni.student.repository.UserRepository;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +31,8 @@ public class AppUserDetailService implements UserDetailsService {
         AppUser appUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
+        return createUserDetails(appUser);
+
         /* old
         return new User(username,
                 appUser.getPassword(),
@@ -38,22 +41,29 @@ public class AppUserDetailService implements UserDetailsService {
                         .collect(Collectors.toList()));
 
          */
-        //new
+                //new
 
-        Set<Course> courses = null;
-        if (appUser instanceof Teacher teacher) //a cast-olt valtozonak nevet is adhatok egybol >java17(?)
-        {
-            courses = teacher.getCourses();
-        } else if (appUser instanceof Student student) {
-            courses = student.getCourses();
-        }
 
-        return new UserInfo(
-                username,
-                appUser.getPassword(),
-                Arrays.asList(new SimpleGrantedAuthority(appUser.getUserType().toString())),
-                courses == null ? null : courses.stream()
-                        .map(course -> (int) (long) course.getId())
-                        .collect(Collectors.toList()));
     }
+
+
+
+public static UserDetails createUserDetails(AppUser appUser) {
+    Set < Course > courses = null;
+    if (appUser instanceof Teacher teacher) //a cast-olt valtozonak nevet is adhatok egybol >java17(?)
+    {
+        courses = teacher.getCourses();
+    } else if (appUser instanceof Student student) {
+        courses = student.getCourses();
+    }
+
+    return new UserInfo(
+            appUser.getUsername(),
+            appUser.getPassword(),
+            Arrays.asList(new SimpleGrantedAuthority(appUser.getUserType().toString())),
+            courses == null ? null : courses.stream()
+                    .map(course -> (int) (long) course.getId())
+                    .collect(Collectors.toList()));
+}
+
 }
