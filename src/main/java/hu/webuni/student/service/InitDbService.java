@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -80,10 +82,10 @@ public class InitDbService {
         Teacher teacher3 = saveNewTeacher("teacher3", LocalDate.of(1948, 10, 24), "v", "pass");
         Teacher teacher4 = saveNewTeacher("teacher4", LocalDate.of(1948, 10, 25), "z", "pass");
 
-        Course course1 = courseRepository.save(new Course("angol", Set.of(student1), Set.of(teacher1)));
-        Course course2 = courseRepository.save(new Course("nemet", Set.of(student2), Set.of(teacher2)));
-        Course course3 = courseRepository.save(new Course("holland", Set.of(student3), Set.of(teacher3)));
-        Course course4 = courseRepository.save(new Course("magyar", Set.of(student4), Set.of(teacher4)));
+        Course course1 = courseRepository.save(new Course("angol", Arrays.asList(student1), Set.of(teacher1)));
+        Course course2 = courseRepository.save(new Course("nemet", Arrays.asList(student2), Set.of(teacher2)));
+        Course course3 = courseRepository.save(new Course("holland", Arrays.asList(student3), Set.of(teacher3)));
+        Course course4 = courseRepository.save(new Course("magyar", Arrays.asList(student4, student2), Set.of(teacher4)));
 
         /*
         student1.setCentralId(101);

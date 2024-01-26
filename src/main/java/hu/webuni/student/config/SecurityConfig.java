@@ -81,7 +81,7 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConf) throws Exception {
         return authConf.getAuthenticationManager();
     }
-        /*
+/*
         @Bean
         public AuthenticationProvider authenticationProvider() {
             DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
@@ -90,7 +90,9 @@ public class SecurityConfig {
             return daoAuthenticationProvider;
         }
 
-         */
+
+
+ */
 
 }
 

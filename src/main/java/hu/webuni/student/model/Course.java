@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.envers.Audited;
 
 import jakarta.persistence.*;
+
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -37,7 +39,7 @@ public class Course {
 
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Student> students;
+    private List<Student> students;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Teacher> teachers;
@@ -49,7 +51,7 @@ public class Course {
 //    }
 
 
-    public Course(String name, Set<Student> students, Set<Teacher> teachers) {
+    public Course(String name, List<Student> students, Set<Teacher> teachers) {
         this.name = name;
         this.students = students;
         this.teachers = teachers;
