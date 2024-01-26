@@ -29,7 +29,7 @@ public class JwtLoginController {
                                         loginDto.getUsername(),
                                         loginDto.getPassword()));
 
-        return jwtService.createJwtToken((UserDetails)authentication.getPrincipal());
+        return "\"" + jwtService.createJwtToken((UserDetails)authentication.getPrincipal()) + "\"";
 
     }
 

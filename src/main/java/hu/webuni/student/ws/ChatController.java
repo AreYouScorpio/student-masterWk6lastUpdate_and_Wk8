@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 
@@ -14,6 +15,7 @@ public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
     @MessageMapping("/chat") // this method runs if call is coming to here
+    @PreAuthorize("message.sender == authentication.principal.username")//ne kuldhessen a course-ra nem feliratkozott uzenetet a course-be
     public void send(ChatMessage message) throws Exception{
         messagingTemplate.convertAndSend(
                 "/topic/courseChat/" + message.getCourseId(),
