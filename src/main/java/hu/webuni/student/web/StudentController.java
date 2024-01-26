@@ -2,17 +2,11 @@ package hu.webuni.student.web;
 
 import hu.webuni.student.api.StudentControllerApi;
 import hu.webuni.student.api.model.StudentDto;
-import hu.webuni.student.aspect.Retry;
 import hu.webuni.student.mapper.StudentMapper;
-import hu.webuni.student.model.Image;
 import hu.webuni.student.model.Student;
-import hu.webuni.student.repository.StudentRepository;
 import hu.webuni.student.service.StudentService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;

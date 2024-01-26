@@ -3,7 +3,6 @@ package hu.webuni.student.service;
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
-import hu.webuni.student.model.Image;
 import hu.webuni.student.model.QStudent;
 import hu.webuni.student.model.Student;
 import hu.webuni.student.repository.CourseRepository;
@@ -12,7 +11,6 @@ import hu.webuni.student.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
@@ -111,6 +108,10 @@ public class StudentService {
         return studentRepository.findById(id);
     }
 
+    public Student findStudentByCentralId(int centralId) {
+        return studentRepository.findByCentralId(centralId);
+    }
+
     @Transactional
     public void delete(long id) {
         // em.remove(findById(id));
@@ -143,16 +144,25 @@ public class StudentService {
     @Async
     public void updateSemesters(){
         System.out.println("updateSemesters called");
+
+        System.out.println(studentRepository.findAll().toString());
         studentRepository.findAll().forEach(student ->
         {
-            updateStudentWithSemester(student);
+            Integer centralIdOfActualStudent = student.getCentralId();
+            System.out.println("centralIdOfActualStudent: " + centralIdOfActualStudent);
+            if (centralIdOfActualStudent!=null) {
+                student = studentRepository.findByCentralId(centralIdOfActualStudent);
+                System.out.println("This is the student for this centralId: " + student.toString());
+            updateStudentWithSemester(student);}
         });
     }
 
     private void updateStudentWithSemester(Student student) {
         try {
         student.setFreeSemester(semesterService.getFreeSemester(student.getCentralId()));
-        studentRepository.save(student);}
+        studentRepository.save(student);
+            System.out.println("The new student saved: " + student.toString());
+        }
         catch (Exception e) {
             System.out.println("Error catched for id: "+ student.getId() + " and centralId: " +student.getCentralId() +" in StudentService/updateStudentWithSemester() ..startPolling" );
             startPollingForSemester(student.getId(), 500);

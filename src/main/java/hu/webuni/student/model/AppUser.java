@@ -24,7 +24,7 @@ public abstract class AppUser {
     }
 
     @Id
-    @GeneratedValue//(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToString.Include
     @EqualsAndHashCode.Include
     private long id;

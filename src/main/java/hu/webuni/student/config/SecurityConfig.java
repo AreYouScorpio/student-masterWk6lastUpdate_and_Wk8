@@ -51,15 +51,17 @@ public class SecurityConfig {
 //			.and()
                     .csrf(
                             csrf -> csrf.disable()
-                    )//			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    )
+                    //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     //.and()
+                    .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(auth -> auth
                             //.requestMatchers("/oauth2/**").permitAll()
                             //.requestMatchers("/fbLoginSuccess").permitAll()
                             .requestMatchers("/api/login/**").permitAll()
                             .requestMatchers("/api/stomp/**").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/api/students/**").hasAuthority("admin")
-                            .requestMatchers(HttpMethod.PUT, "/api/students/**").hasAnyAuthority("user", "admin")
+                            .requestMatchers(HttpMethod.POST, "/api/courses/**").hasAuthority("TEACHER")
+                            .requestMatchers(HttpMethod.PUT, "/api/courses/**").hasAuthority("TEACHER")
                             .anyRequest().authenticated()
                     )
                     //.oauth2Login(oAuth2Login -> oAuth2Login

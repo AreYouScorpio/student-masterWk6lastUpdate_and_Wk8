@@ -15,7 +15,7 @@ import java.util.Set;
 @Data
 @SuperBuilder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
-@ToString(onlyExplicitlyIncluded = true)
+@ToString//(onlyExplicitlyIncluded = true)
 @Entity
 @Cacheable
 @Audited
@@ -23,6 +23,8 @@ import java.util.Set;
 @Setter
 public class Student extends AppUser{
 
+    @Generated
+    private long id;
 
     /*
     @ToString.Include
@@ -73,4 +75,8 @@ public class Student extends AppUser{
     public UserType getUserType() {
         return UserType.STUDENT;
     }
+
+
+
+
 }
