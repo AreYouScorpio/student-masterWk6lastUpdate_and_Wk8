@@ -6,6 +6,7 @@ import org.hibernate.envers.Audited;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -43,6 +44,20 @@ public class Course {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Teacher> teachers;
+
+
+    @OneToMany(mappedBy = "course")
+    private Set<TimeTableItem> timeTableItems;
+
+    private Semester semester;
+
+    public void addTimeTableItem(TimeTableItem timeTableItem) {
+        timeTableItem.setCourse(this);
+        if(this.timeTableItems == null)
+            this.timeTableItems = new HashSet<>();
+        this.timeTableItems.add(timeTableItem);
+    }
+
 
 //    public Course(String name, Student student, Teacher teacher) {
 //        this.name = name;

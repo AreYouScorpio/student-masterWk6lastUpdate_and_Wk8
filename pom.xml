@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -290,7 +290,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <!--
+            <!-- this is for generating openapi yml .. dont forget to set up in config/SecurityConfig .requestMatchers("/**").permitAll() so that it can access the localhost:8080/v3/api-docs.yaml while running the app for generation docs .. location will be C:\Users\atschweger\Downloads\api-docs
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
@@ -301,7 +301,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/openapi/student-openapi.yml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/openapi/student-openapi2.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <configOptions>
                                 <useTags>true</useTags>
@@ -314,7 +314,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>--> <!-- leiro a localhost:8080/v3/api-docs.yaml alatt lesz -->
+            </plugin> --> <!-- leiro a localhost:8080/v3/api-docs.yaml alatt lesz -->
 
             <plugin>
                 <groupId>org.openapitools</groupId>
@@ -375,7 +375,21 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version> <!-- Use the version appropriate for your project -->
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 
 </project>
