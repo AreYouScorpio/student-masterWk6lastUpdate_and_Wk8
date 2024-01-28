@@ -328,7 +328,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/openapi/student-openapi.yml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/openapi/studentWk6andWk4-openapi.yaml</inputSpec>
                             <generatorName>spring</generatorName>
                             <configOptions>
                                 <!-- Add this line to generate Jakarta annotations -->

@@ -7,6 +7,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.*;
 import org.hibernate.envers.Audited;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -26,7 +27,8 @@ public class TimeTableItem {
     @EqualsAndHashCode.Include
     private int id;
 
-    private int dayOfWeek;
+    private String courseName;
+    private LocalDate dayOfWeek;
     private LocalTime startLesson;
     private LocalTime endLesson;
 
