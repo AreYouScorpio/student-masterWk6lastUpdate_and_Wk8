@@ -94,9 +94,9 @@ public class InitDbService {
         addNewTimeTableItem(course3, 3, "08:15", "09:45");
         addNewTimeTableItem(course3, 5, "08:15", "09:45");
 
-        saveSpecialDay("2022-04-18", null);
-        saveSpecialDay("2022-03-15", null);
-        saveSpecialDay("2022-03-14", "2022-03-26");
+        saveSpecialDay("2022-04-18", null);         //holiday
+        saveSpecialDay("2022-03-15", null);         //holiday
+        saveSpecialDay("2022-03-14", "2022-03-26"); //day change [bridgeday->original working day->working on original non-working day]
 
 
         /*
