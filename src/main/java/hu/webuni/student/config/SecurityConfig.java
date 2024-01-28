@@ -64,6 +64,7 @@ public class SecurityConfig {
                             .requestMatchers("/api/login/**").permitAll()
                             .requestMatchers("/api/stomp/**").permitAll()
                             .requestMatchers("/api/v3/**").permitAll()
+                            .requestMatchers("/**").permitAll()
                             //.requestMatchers("/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/courses/**").hasAuthority("TEACHER")
                             .requestMatchers(HttpMethod.PUT, "/api/courses/**").hasAuthority("TEACHER")
