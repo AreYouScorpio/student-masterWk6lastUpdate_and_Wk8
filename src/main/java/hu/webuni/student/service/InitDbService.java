@@ -1,12 +1,7 @@
 package hu.webuni.student.service;
 
-import hu.webuni.student.model.Course;
-import hu.webuni.student.model.Student;
-import hu.webuni.student.model.Teacher;
-import hu.webuni.student.repository.CourseRepository;
-import hu.webuni.student.repository.StudentRepository;
-import hu.webuni.student.repository.TeacherRepository;
-import hu.webuni.student.repository.UserRepository;
+import hu.webuni.student.model.*;
+import hu.webuni.student.repository.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +41,9 @@ public class InitDbService {
 
     @Autowired
     UserRepository userRepository;
+
+    private final TimeTableItemRepository timeTableItemRepository;
+    private final SpecialDayRepository specialDayRepository;
 
 
     @Transactional
@@ -86,6 +85,19 @@ public class InitDbService {
         Course course2 = courseRepository.save(new Course("nemet", Arrays.asList(student2), Set.of(teacher2)));
         Course course3 = courseRepository.save(new Course("holland", Arrays.asList(student3), Set.of(teacher3)));
         Course course4 = courseRepository.save(new Course("magyar", Arrays.asList(student4, student2), Set.of(teacher4)));
+
+
+        addNewTimeTableItem(course1, 1, "10:15", "11:45");
+        addNewTimeTableItem(course1, 3, "10:15", "11:45");
+        addNewTimeTableItem(course2, 2, "12:15", "13:45");
+        addNewTimeTableItem(course2, 4, "10:15", "11:45");
+        addNewTimeTableItem(course3, 3, "08:15", "09:45");
+        addNewTimeTableItem(course3, 5, "08:15", "09:45");
+
+        saveSpecialDay("2022-04-18", null);
+        saveSpecialDay("2022-03-15", null);
+        saveSpecialDay("2022-03-14", "2022-03-26");
+
 
         /*
         student1.setCentralId(101);
@@ -243,7 +255,23 @@ public class InitDbService {
                         .build());
     }
 
+    private void addNewTimeTableItem(Course course, int dayOfWeek, String startLession, String endLession) {
+        course.addTimeTableItem(timeTableItemRepository.save(
+                TimeTableItem.builder()
+                        .dayOfWeek(dayOfWeek)
+                        .startLesson(LocalTime.parse(startLession))
+                        .endLesson(LocalTime.parse(endLession))
+                        .build()
+        ));
+    }
+    private void saveSpecialDay(String sourceDay, String targetDay) {
+        specialDayRepository.save(
+                SpecialDay.builder()
+                        .sourceDay(LocalDate.parse(sourceDay))
+                        .targetDay(targetDay == null ? null : LocalDate.parse(targetDay))
+                        .build());
 
+    }
 }
 
 
