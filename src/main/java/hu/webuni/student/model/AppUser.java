@@ -16,6 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+//@Inheritance(strategy = InheritanceType.JOINED) //using @Inheritance(strategy = InheritanceType.JOINED) can be a good option, especially if you have a complex class hierarchy and want to avoid issues related to the single table strategy. With InheritanceType.JOINED, each subclass (e.g., Teacher and Student) has its own table, and a join operation is used to retrieve data from the related tables. This strategy tends to be more normalized and avoids having a large table with many null columns.
 public abstract class AppUser {
 
 

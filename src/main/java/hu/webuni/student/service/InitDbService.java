@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import static hu.webuni.student.model.Semester.SemesterType.SPRING;
+
 @RequiredArgsConstructor
 @Service
 public class InitDbService {
@@ -49,6 +51,7 @@ public class InitDbService {
     @Transactional
     public void addInitData() {
 
+
         /*
         Student student1 = userRepository.save(new Student("student1", LocalDate.of(1977, 6, 27), 1));
         Student student2 = userRepository.save(new Student("student2", LocalDate.of(1977, 7, 27), 2));
@@ -63,6 +66,8 @@ public class InitDbService {
         Student student2 = saveNewStudent("student2", LocalDate.of(1977, 7, 27),1,102,"b", "pass");
         Student student3 = saveNewStudent("student3", LocalDate.of(1977, 8, 27),1,103,"c", "pass");
         Student student4 = saveNewStudent("student4", LocalDate.of(1977, 9, 27),1,104,"d", "pass");
+
+
 
 
 
@@ -81,10 +86,16 @@ public class InitDbService {
         Teacher teacher3 = saveNewTeacher("teacher3", LocalDate.of(1948, 10, 24), "v", "pass");
         Teacher teacher4 = saveNewTeacher("teacher4", LocalDate.of(1948, 10, 25), "z", "pass");
 
-        Course course1 = courseRepository.save(new Course("angol", Arrays.asList(student1), Set.of(teacher1)));
-        Course course2 = courseRepository.save(new Course("nemet", Arrays.asList(student2), Set.of(teacher2)));
-        Course course3 = courseRepository.save(new Course("holland", Arrays.asList(student3), Set.of(teacher3)));
-        Course course4 = courseRepository.save(new Course("magyar", Arrays.asList(student4, student2), Set.of(teacher4)));
+
+        Course course1 = new Course(2023, "angol", Arrays.asList(student1), Set.of(teacher1), new Semester(2023, SPRING));
+        Course course2 = new Course(2023, "nemet", Arrays.asList(student2), Set.of(teacher2), new Semester(2023, SPRING));
+        Course course3 = new Course(2023, "holland", Arrays.asList(student3), Set.of(teacher3), new Semester(2023, SPRING));
+        Course course4 = new Course(2023, "magyar", Arrays.asList(student4, student2), Set.of(teacher4), new Semester(2023, SPRING));
+
+        courseRepository.save(course1);
+        courseRepository.save(course2);
+        courseRepository.save(course3);
+        courseRepository.save(course4);
 
 
         addNewTimeTableItem(course1, 1, "10:15", "11:45");
@@ -94,9 +105,15 @@ public class InitDbService {
         addNewTimeTableItem(course3, 3, "08:15", "09:45");
         addNewTimeTableItem(course3, 5, "08:15", "09:45");
 
+
+
         saveSpecialDay("2022-04-18", null);         //holiday
         saveSpecialDay("2022-03-15", null);         //holiday
         saveSpecialDay("2022-03-14", "2022-03-26"); //day change [bridgeday->original working day->working on original non-working day]
+
+
+
+
 
 
         /*
@@ -124,7 +141,10 @@ public class InitDbService {
         courseRepository.deleteAll();
         teacherRepository.deleteAll();
         studentRepository.deleteAll();
-        userRepository.deleteAll();
+        userRepository.deleteAll(); // The deleteAll() method is used to delete all records/entities from the repository one by one in a loop.
+        specialDayRepository.deleteAllInBatch(); // The deleteAllInBatch() method is used to delete all records/entities from the repository in a single batch.
+                                                 // It issues a single SQL DELETE statement, which deletes all records in one database interaction.
+        timeTableItemRepository.deleteAllInBatch();
     }
 
     @Transactional
@@ -272,6 +292,8 @@ public class InitDbService {
                         .build());
 
     }
+
+
 }
 
 
