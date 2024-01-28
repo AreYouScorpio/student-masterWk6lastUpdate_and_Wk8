@@ -145,7 +145,7 @@ public class StudentService {
     public void updateSemesters(){
         System.out.println("updateSemesters called");
 
-        /* by centralId
+        // by centralId
 
         System.out.println(studentRepository.findAll().toString());
         studentRepository.findAll().forEach(student ->
@@ -158,15 +158,17 @@ public class StudentService {
             updateStudentWithSemester(student);}
         });
 
-         */
+
 
         // by id
-
+/*
         studentRepository.findAll().forEach(student ->
         {
             updateStudentWithSemester(student);
         });
 
+
+ */
     }
 
     private void updateStudentWithSemester(Student student) {
