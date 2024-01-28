@@ -30,6 +30,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -287,8 +288,14 @@ public class CourseController implements CourseControllerApi {
 
  */
 
+    @Override
+    public ResponseEntity<Void> cancelLesson(Integer courseId, LocalDate day) {
+        Course course = courseRepository.findById((long)courseId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-
-
-
+        messagingTemplate.convertAndSend(
+                "/topic/courseChat/" + courseId,
+                "A %s kurzus %s napon elmarad.".formatted(course.getName(), day)
+        );
+        return ResponseEntity.ok().build();
+    }
 }

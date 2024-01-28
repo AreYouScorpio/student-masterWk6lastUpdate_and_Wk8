@@ -26,8 +26,8 @@ public class TimeTableService {
     private final TimeTableItemRepository timeTableItemRepository;
 
     @Autowired
-    @Lazy
-    private TimeTableService self;
+    @Lazy //megengedi, h utolag tortenjen meg az injektalas
+    private TimeTableService self; //oninjektalas, h a cache mukodjon, local metodust hivva nem mukodne, csak ha kulon bean van injektalva
 
 
     @Cacheable("studentTimetableResults")
