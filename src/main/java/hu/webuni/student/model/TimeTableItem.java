@@ -28,7 +28,7 @@ public class TimeTableItem {
     private int id;
 
     private String courseName;
-    private LocalDate dayOfWeek;
+    private int dayOfWeek;
     private LocalTime startLesson;
     private LocalTime endLesson;
 
