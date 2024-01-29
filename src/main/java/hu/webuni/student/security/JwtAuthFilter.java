@@ -38,5 +38,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response); // továbbengedjük a kérést és a választ
     }
 
+    public static UsernamePasswordAuthenticationToken createUserDetailsFromAuthHeader(String authHeader, JwtService jwtService) {
+        if(authHeader != null && authHeader.startsWith(BEARER)) {
+            String jwtToken = authHeader.substring(BEARER.length());
+            UserDetails principal = jwtService.parseJwt(jwtToken);
 
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
+            return authentication;
+        }
+        return null;
+    }
 }

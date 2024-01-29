@@ -11,6 +11,6 @@ public class ChatMessage {
 
     private long courseId;
     private String text;
-    private OffsetDateTime timestamp;
+    //private OffsetDateTime timestamp;
 
 }

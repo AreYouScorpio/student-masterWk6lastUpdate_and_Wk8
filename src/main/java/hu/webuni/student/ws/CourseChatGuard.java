@@ -9,6 +9,7 @@ public class CourseChatGuard {
 
     public boolean checkCourseId(Authentication authentication, int courseId) {
         UserInfo userInfo = (UserInfo) authentication.getPrincipal();
-        return userInfo.getCourseIds().contains(courseId); // ekkor engedjuk a feliratkozast
-    };
+        return userInfo.getCourseIds().contains(courseId);
+    } // ekkor engedjuk a feliratkozast
+
 }

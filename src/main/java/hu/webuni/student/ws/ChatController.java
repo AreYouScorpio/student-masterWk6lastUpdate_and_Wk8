@@ -24,6 +24,7 @@ public class ChatController {
                 //String.format("%s: %s :%s", message.getSender(), message.getText(), message.getTimestamp()));
                 String.format("%s: %s", message.getSender(), message.getText()));
 
+
     }
 
 
