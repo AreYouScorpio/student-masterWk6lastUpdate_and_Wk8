@@ -19,6 +19,18 @@ public class FacebookLoginService {
 
     private static final String GRAPH_API_BASE_URL = "https://graph.facebook.com/v13.0";
 
+    // Graph Structure: Data is represented as a graph, which consists of nodes (entities) and edges (relationships) connecting those nodes.
+
+    /*
+    The term "Graph API" typically refers to an application programming interface (API)
+    that allows developers to interact with and manipulate the data in a graph-based model.
+    A graph, in this context, is a collection of nodes and edges that represent relationships between those nodes.
+
+    One of the most well-known instances of a Graph API is the Facebook Graph API.
+    It provides developers with a way to access and interact with the social graph of Facebook,
+    which includes users, relationships, photos, posts, and more.
+     */
+
     private final UserRepository userRepository;
 
     @Getter
@@ -56,7 +68,7 @@ public class FacebookLoginService {
 
         String fbId = String.valueOf(facebookData.getId());
         Optional<AppUser> optionalExistingUser = userRepository.findByFacebookId(fbId);
-        if(optionalExistingUser.isEmpty()) {
+        if (optionalExistingUser.isEmpty()) {
             Student newStudent = Student.builder()
                     .facebookId(fbId)
                     .username(facebookData.getEmail())
