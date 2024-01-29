@@ -10,7 +10,7 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
 
     @Override
     protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
-        //messages.simpSubscribeDestMatchers("/topic/courseChat/{courseId}").hasAuthority("admin"); -> ha bonyolultabb, akkor szervezzuk ki
+        //messages.simpSubscribeDestMatchers("/topic/courseChat/{courseId}").hasAuthority("admin"); //-> ha bonyolultabb, akkor szervezzuk ki
         messages.simpSubscribeDestMatchers("/topic/courseChat/{courseId}")
                 .access("@courseChatGuard.checkCourseId(authentication, #courseId)"); //szabalyok kiszervezese, az url es az authorization alapjan dont, ezek az un guard-ok
                 // # - hashmark-kal tudjuk behivatkozni az url-nek a /{courseId} darabjat
