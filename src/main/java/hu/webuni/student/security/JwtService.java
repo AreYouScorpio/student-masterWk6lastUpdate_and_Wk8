@@ -30,6 +30,8 @@ public class JwtService {
 
         List<Integer> courseIds = userInfo.getCourseIds();
 
+        System.out.println("createJwtToken principal userinfo.getCourseIds: " + courseIds.toString()); //OK
+
 
         return JWT.create()
                 .withSubject(principal.getUsername())
@@ -49,7 +51,8 @@ public class JwtService {
                 .build()
                 .verify(jwtToken);
        // return new User(decodedJwt.getSubject(), "dummy_barmi_lehet", decodedJwt.getClaim(AUTH).asList(String.class).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList())); // user jelszó kéne, de mivel most végezzük az autentikációt, később úgysem használjuk, de am később innét tudná
-        return new UserInfo(decodedJwt.getSubject(), "dummy_barmi_lehet", decodedJwt.getClaim(AUTH).asList(String.class).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()),
+        return new UserInfo(decodedJwt.getSubject(), "dummy_barmi_lehet",
+                decodedJwt.getClaim(AUTH).asList(String.class).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()),
                 decodedJwt.getClaim(COURSE_IDS).asList(Integer.class)); // user jelszó kéne, de mivel most végezzük az autentikációt, később úgysem használjuk, de am később innét tudná
     }
 

@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,7 +32,25 @@ public class AppUserDetailService implements UserDetailsService {
         AppUser appUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        return createUserDetails(appUser);
+        Set<Course> courses = null;
+        if(appUser instanceof Teacher teacher) {
+            courses = teacher.getCourses();
+            System.out.println("AppUserDetailService/loadUserByUsername -> courses by Teacher: " + courses.toString()); //OK
+        } else if (appUser instanceof Student student) {
+            courses = student.getCourses();
+            System.out.println("AppUserDetailService/loadUserByUsername -> courses by Student: " + courses.toString()); //OK
+
+        }
+
+        //return createUserDetails(appUser);
+        return new UserInfo(
+                username,
+                appUser.getPassword(),
+                Arrays.asList(new SimpleGrantedAuthority(appUser.getUserType().toString())),
+                courses == null ? null : courses.stream()
+                        .map(course -> (int) (long) course.getId())
+                        .collect(Collectors.toList()));
+
 
         /* old
         return new User(username,

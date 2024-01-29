@@ -14,10 +14,10 @@ import org.springframework.stereotype.Controller;
 @RequiredArgsConstructor
 public class ChatController {
 
-// tanari verzio - @PreAuthorize nem mukodik
+// tanari verzio - @PreAuthorize nem mukodik (@Configuration maradt le a ws/WebSocketSecurityConfig-rol ? .. tovabbra sem jo
     private final SimpMessagingTemplate messagingTemplate;
     @MessageMapping("/chat") // this method runs if call is coming to here
-    //@PreAuthorize("#message.sender == authentication.principal.username")//ne kuldhessen a course-ra nem feliratkozott uzenetet a course-be
+    @PreAuthorize("#message.sender == authentication.principal.username")//ne kuldhessen a course-ra nem feliratkozott uzenetet a course-be
     public void send(ChatMessage message) throws Exception{
         messagingTemplate.convertAndSend(
                 "/topic/courseChat/" + message.getCourseId(),

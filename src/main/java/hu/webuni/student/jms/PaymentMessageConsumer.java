@@ -3,6 +3,7 @@ package hu.webuni.student.jms;
 import hu.webuni.spring.financialsystem.model.PaymentDto;
 import hu.webuni.student.model.Student;
 import hu.webuni.student.service.StudentService;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,13 @@ import java.util.Optional;
 
 @Component
 public class PaymentMessageConsumer {
+
+
+    // !!!!! teacher remarks !!!!!
+    // Jó lett, egy észrevétel, de emiatt ne tölts fel újat:
+    // "A PaymentMessageConsumer-ben túl sok kód van.
+    // Egyetlen service metódust kellene onnan hívni,
+    // és az intézze a find-ot, módosításokat, stb."
 
     @Autowired
     StudentService studentService;
