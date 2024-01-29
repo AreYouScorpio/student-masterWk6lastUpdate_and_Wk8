@@ -45,10 +45,10 @@ public static UserDetails createUserDetails(AppUser appUser) {
     if (appUser instanceof Teacher teacher) //a cast-olt valtozonak nevet is adhatok egybol >java17(?)
     {
         courses = teacher.getCourses();
-        System.out.println("AppUserDetailService/loadUserByUsername -> courses by Teacher: " + courses.toString()); //OK
+        //System.out.println("AppUserDetailService/loadUserByUsername -> courses by Teacher: " + courses.toString()); //OK
     } else if (appUser instanceof Student student) {
         courses = student.getCourses();
-        System.out.println("AppUserDetailService/loadUserByUsername -> courses by Student: " + courses.toString()); //OK
+        //System.out.println("AppUserDetailService/loadUserByUsername -> courses by Student: " + courses.toString()); //OK
     }
 
     return new UserInfo(
