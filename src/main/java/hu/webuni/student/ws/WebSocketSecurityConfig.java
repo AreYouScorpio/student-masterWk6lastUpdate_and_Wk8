@@ -5,6 +5,7 @@ import org.springframework.security.config.annotation.web.messaging.MessageSecur
 import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
 
 @Configuration
+
 public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBrokerConfigurer {
 
 
@@ -15,6 +16,30 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
                 .access("@courseChatGuard.checkCourseId(authentication, #courseId)"); //szabalyok kiszervezese, az url es az authorization alapjan dont, ezek az un guard-ok
                 // # - hashmark-kal tudjuk behivatkozni az url-nek a /{courseId} darabjat
     }
+
+
+/* alternativ:
+
+A web socket security új stílusú konfigjáról itt lehet olvasni:
+https://docs.spring.io/spring-security/reference/6.0/servlet/integrations/websocket.html
+Az AbstractSecurityWebSocketMessageBrokerConfigurer deprecated, helyette az @EnableWebSocketSecurity annotáció használható, és az általam a videón mutatott
+	@Override
+	protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
+		messages.simpSubscribeDestMatchers("/topic/delay/*").hasAuthority("admin");
+	}
+helyett így kellene az autorizációt beállítani:
+    @Bean
+    AuthorizationManager messageAuthorizationManager(MessageMatcherDelegatingAuthorizationManager.Builder messages) {
+        messages
+                .simpSubscribeDestMatchers("/topic/delay/*").hasAuthority("admin");
+        return messages.build();
+    }
+
+Mégsem álltam át erre a megoldásra, mert az @EnableWebSocketSecurity  egyelőre nem támogatja a CSRF kikapcsolását. Azt egyelőre csak XML konfiggal, vagy pont a videón mutatott régebbi API-val lehet megoldani.
+https://docs.spring.io/spring-security/reference/6.1.1/servlet/integrations/websocket.html#websocket-sameorigin-disable
+
+ */
+
 
     @Override
     protected boolean sameOriginDisabled() {

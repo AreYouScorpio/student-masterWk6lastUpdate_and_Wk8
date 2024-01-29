@@ -32,36 +32,9 @@ public class AppUserDetailService implements UserDetailsService {
         AppUser appUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        Set<Course> courses = null;
-        if(appUser instanceof Teacher teacher) {
-            courses = teacher.getCourses();
-            System.out.println("AppUserDetailService/loadUserByUsername -> courses by Teacher: " + courses.toString()); //OK
-        } else if (appUser instanceof Student student) {
-            courses = student.getCourses();
-            System.out.println("AppUserDetailService/loadUserByUsername -> courses by Student: " + courses.toString()); //OK
-
-        }
-
-        //return createUserDetails(appUser);
-        return new UserInfo(
-                username,
-                appUser.getPassword(),
-                Arrays.asList(new SimpleGrantedAuthority(appUser.getUserType().toString())),
-                courses == null ? null : courses.stream()
-                        .map(course -> (int) (long) course.getId())
-                        .collect(Collectors.toList()));
 
 
-        /* old
-        return new User(username,
-                appUser.getPassword(),
-                appUser.getRoles().stream()
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList()));
-
-         */
-                //new
-
+        return createUserDetails(appUser);
 
     }
 
@@ -72,8 +45,10 @@ public static UserDetails createUserDetails(AppUser appUser) {
     if (appUser instanceof Teacher teacher) //a cast-olt valtozonak nevet is adhatok egybol >java17(?)
     {
         courses = teacher.getCourses();
+        System.out.println("AppUserDetailService/loadUserByUsername -> courses by Teacher: " + courses.toString()); //OK
     } else if (appUser instanceof Student student) {
         courses = student.getCourses();
+        System.out.println("AppUserDetailService/loadUserByUsername -> courses by Student: " + courses.toString()); //OK
     }
 
     return new UserInfo(
