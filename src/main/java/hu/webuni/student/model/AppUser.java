@@ -30,6 +30,7 @@ public abstract class AppUser {
     @EqualsAndHashCode.Include
     private long id;
 
+    @ToString.Include
     private String name;
 
     private LocalDate birthdate;
