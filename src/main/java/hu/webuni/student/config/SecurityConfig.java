@@ -19,6 +19,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @EnableWebSecurity
@@ -35,6 +37,15 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    //this is for error elimination regarding <3.2 spring boot with security problems at    .requestMatchers("/services/**").permitAll()
+    /*
+    @Bean
+    MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
+        return new MvcRequestMatcher.Builder(introspector);
+    }
+
+     */
 
 /*
     //USERS
@@ -64,7 +75,8 @@ public class SecurityConfig {
                             .requestMatchers("/api/login/**").permitAll()
                             .requestMatchers("/api/stomp/**").permitAll()
                             .requestMatchers("/api/v3/**").permitAll()
-                            //.requestMatchers("/**").permitAll()
+                            .requestMatchers("/services/**").permitAll()
+                            .requestMatchers("/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/courses/**").hasAuthority("TEACHER")
                             .requestMatchers(HttpMethod.PUT, "/api/courses/**").hasAuthority("TEACHER")
                             .anyRequest().authenticated()

@@ -2,15 +2,20 @@ package hu.webuni.student.service;
 
 import hu.webuni.student.aspect.Retry;
 import hu.webuni.student.error.ErrorDecision;
+import hu.webuni.jms.dto.FreeSemesterRequest;
 import hu.webuni.student.wsclient.CentralsystemXmlWs;
 import hu.webuni.student.wsclient.CentralsystemXmlWsImplService;
+import jakarta.jms.Topic;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
 //@LogCall - moved only to error method in ErrorDecision
 @Service
+@RequiredArgsConstructor
 public class SemesterService {
 
     private Random random = new Random();
@@ -18,6 +23,7 @@ public class SemesterService {
     @Autowired
     ErrorDecision errorDecision;
 
+    private final JmsTemplate educationJmsTemplate;
 
     @Retry
     public int getFreeSemester(long centralId) {
@@ -77,6 +83,17 @@ public class SemesterService {
 //        return result;
 //    }
 
+    public void askNumFreeSemestersForStudent(int eduId) {
 
+        Topic topic = educationJmsTemplate.execute(session -> session.createTopic("free_semester_responses"));
+
+        FreeSemesterRequest freeSemesterRequest = new FreeSemesterRequest();
+        freeSemesterRequest.setStudentId(eduId);
+        educationJmsTemplate.convertAndSend("free_semester_requests", freeSemesterRequest, message -> {
+            message.setJMSReplyTo(topic);
+            return message;
+        });
+
+    }
 
 }

@@ -23,8 +23,8 @@ public class PaymentMessageConsumer {
     @Autowired
     StudentService studentService;
 
-    //behivatkozni jmsconfigbol, ami a csatlakozast biztositja factory (myFactory)
-    @JmsListener(destination = "payments", containerFactory = "myFactory")
+    //behivatkozni jmsconfigbol, ami a csatlakozast biztositja factory (myFactory, stb mas factory)
+    @JmsListener(destination = "payments", containerFactory = "financeFactory")
     //queue or topic name (the same at financialsystem) //ehhez meg kell egy converter is, h Payment object-et tudjon gyartani
     public void onPaymentMessage(PaymentDto paymentMessage) {
         System.out.println("This is the paymentMessage: " + paymentMessage.toString() + " values: " + paymentMessage.getStudentId() + "  " + paymentMessage.getCashPaidIn());

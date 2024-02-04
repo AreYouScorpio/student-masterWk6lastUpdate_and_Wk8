@@ -31,7 +31,7 @@ public class TimeTableService {
 
 
     @Cacheable("studentTimetableResults")
-    public Map<LocalDate, List<TimeTableItem>> getTimeTableForStudent(int studentId, LocalDate from, LocalDate until) {
+    public Map<LocalDate, List<TimeTableItem>> getTimeTableForStudent(Integer studentId, LocalDate from, LocalDate until) {
         Map<LocalDate, List<TimeTableItem>> timeTable = new LinkedHashMap<>();
 
         Semester semester = Semester.fromMidSemesterDay(from);

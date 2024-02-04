@@ -61,9 +61,9 @@ public class StudentService {
 
         LocalDate birthdate = example.getBirthdate();
 
-            int semester = example.getSemester();
+        int semester = example.getSemester();
 
-            //Specification<Flight> spec = Specification.where(null); // üres Specification, ami semmire nem szűr
+        //Specification<Flight> spec = Specification.where(null); // üres Specification, ami semmire nem szűr
 
         // a FlightSpecifications feltételeit ide írjuk bele közvetlen --->
 
@@ -86,7 +86,7 @@ public class StudentService {
         //spec = spec.and(FlightSpecifications.hasTakeoffTime(takeoffTime));
         {
 
-            predicates.add(student.semester.between(semester, semester+1));
+            predicates.add(student.semester.between(semester, semester + 1));
 
         }
 
@@ -142,8 +142,10 @@ public class StudentService {
     //@Scheduled(cron = "*/15 * * * * *") //15mpenkent -> ehelyett file-bol olvasni
     @Scheduled(cron = "${scheduler.cron}")
     @Async
-    public void updateSemesters(){
+    public void updateSemesters() {
+
         System.out.println("updateSemesters called");
+
 
         // by centralId
 /*
@@ -162,35 +164,58 @@ public class StudentService {
  */
 
 
-
         //by id:
         studentRepository.findAll().forEach(student ->
         {
-            updateStudentWithSemester(student);
+            System.out.println("Student updating by cron call: " + student.toString());
+            updateStudentWithSemester(student); // old synch XML-WS call
+            //updateStudentWithSemester(student.getCentralId(), -1); // new asynch message version (JMS)
+
         });
-
-
 
     }
 
-    private void updateStudentWithSemester(Student student) {
+
+
+
+    private void updateStudentWithSemester(Student student) { // old synch XML-WS call
+        //this was the original synchronized XML-WS call
         try {
-        student.setFreeSemester(semesterService.getFreeSemester(student.getCentralId()));
-        studentRepository.save(student);
-            System.out.println("The new student saved: " + student.toString());
-        }
-        catch (Exception e) {
-            System.out.println("Error catched for id: "+ student.getId() + " and centralId: " +student.getCentralId() +" in StudentService/updateStudentWithSemester() ..startPolling" );
+            student.setFreeSemester(semesterService.getFreeSemester(student.getCentralId()));
+            studentRepository.save(student);
+            System.out.println("The new student saved with synch XML-WS call: " + student.toString());
+        } catch (Exception e) {
+            System.out.println("Error catched for id: " + student.getId() + " and centralId: " + student.getCentralId() + " in StudentService/updateStudentWithSemester() ..startPolling");
             startPollingForSemester(student.getId(), 500);
             stopDelayPollingForSemester(student.getId()); // hogy ne legyen polling es adatmentes, ha mar a hiba helyett jott megfelelo eredmeny, kulonben allandoan probalna updatelni a hibat dobo student freeSemester-et
         }
     }
 
 
-    public void startPollingForSemester(long id, long rate){ // cron helyett fixed rate scheduling lesz
+
+    public void updateStudentWithSemester(int studentId, int freesemester) { // new asynch message version (JMS)
+        Student newAsynchMessageStudent = studentRepository.findById((long)studentId).get();
+        try {
+
+            //this is the new asynch message version (1/Feb/2024):
+            System.out.println("The new student to be saved with asynch message version (JMS): " + newAsynchMessageStudent.toString());
+            semesterService.askNumFreeSemestersForStudent(newAsynchMessageStudent.getCentralId());
+            studentRepository.save(newAsynchMessageStudent);
+            System.out.println("The new student saved with asynch message version (JMS): " + newAsynchMessageStudent.toString());
+
+
+        } catch (Exception e) {
+            System.out.println("Error catched for id: " + studentId + " and centralId: " + newAsynchMessageStudent.getCentralId() + " in StudentService/updateStudentWithSemester() ..startPolling");
+            startPollingForSemester(newAsynchMessageStudent.getId(), 500);
+            stopDelayPollingForSemester(newAsynchMessageStudent.getId()); // hogy ne legyen polling es adatmentes, ha mar a hiba helyett jott megfelelo eredmeny, kulonben allandoan probalna updatelni a hibat dobo student freeSemester-et
+        }
+    }
+
+
+    public void startPollingForSemester(long id, long rate) { // cron helyett fixed rate scheduling lesz
         ScheduledFuture<?> scheduledFuture = taskScheduler.scheduleAtFixedRate(() -> {
             Optional<Student> studentOptional = studentRepository.findById(id);
-            System.out.println("startPollingForSemester starts @ id: "+id + " with rate: " + rate);
+            System.out.println("startPollingForSemester starts @ id: " + id + " with rate: " + rate);
             if (studentOptional.isPresent())
                 updateStudentWithSemester(studentOptional.get());
         }, rate);
@@ -199,10 +224,10 @@ public class StudentService {
         //System.out.println("actual PollerJobs map: " + pollerJobs.toString());
     }
 
-    public void stopDelayPollingForSemester(long id){
+    public void stopDelayPollingForSemester(long id) {
         System.out.println("stopPollingForStudent for id: " + id);
         ScheduledFuture<?> scheduledFuture = pollerJobs.get(id);
-        if(scheduledFuture!=null)
+        if (scheduledFuture != null)
             scheduledFuture.cancel(false); // ha epp futasban van, akarjuk-e megszakitani, azt nem akarjuk
     }
 
@@ -212,10 +237,10 @@ public class StudentService {
     public void saveImageForStudent(long studentId, String fileName, InputStream bytes) {
 
         if (!studentRepository.existsById(studentId)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        try{
+        try {
             Student student = studentRepository.findById(studentId).get();
-            Files.copy(bytes, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);}
-        catch (IOException e){
+            Files.copy(bytes, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
@@ -254,4 +279,6 @@ public class StudentService {
             throw new NoSuchElementException("Student not found with ID: " + studentId);
         }
     }
+
+
 }
