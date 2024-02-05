@@ -105,7 +105,7 @@ public class StudentService {
     public Optional<Student> findById(long id) {
         //return airports.get(id);
         //return em.find(Airport.class, id);
-        return studentRepository.findById(id);
+        return Optional.ofNullable(studentRepository.findById(id));
     }
 
     public Student findStudentByCentralId(int centralId) {
@@ -144,7 +144,7 @@ public class StudentService {
     @Async
     public void updateSemesters() {
 
-        System.out.println("updateSemesters called");
+        System.out.println("updateSemesters called - scheduled");
 
 
         // by centralId
@@ -168,7 +168,7 @@ public class StudentService {
         studentRepository.findAll().forEach(student ->
         {
             System.out.println("Student updating by cron call: " + student.toString());
-            System.out.println("StudentService/updateSemesters studentid : " + student.getCentralId());
+            System.out.println("StudentService/updateSemesters centralId : " + student.getCentralId());
             //***** COMMENT OUT WHICH ONE YOU DONT WANT TO RUN:
             //updateStudentWithSemester(student); // old synch XML-WS call
             updateStudentWithSemester(student.getCentralId(), -1); // new asynch message version (JMS)
@@ -195,7 +195,7 @@ public class StudentService {
 
 
 
-    public void updateStudentWithSemester(int studentId, int freesemester) { // new asynch message version (JMS)
+    public void updateStudentWithSemester(int studentId, int freesemester) { // new asynch message version (JMS), studentId is centralId/eduId now
         Student newAsynchMessageStudent = studentRepository.findByCentralId(studentId);
         try {
 
@@ -216,7 +216,7 @@ public class StudentService {
 
     public void startPollingForSemester(long id, long rate) { // cron helyett fixed rate scheduling lesz
         ScheduledFuture<?> scheduledFuture = taskScheduler.scheduleAtFixedRate(() -> {
-            Optional<Student> studentOptional = studentRepository.findById(id);
+            Optional<Student> studentOptional = Optional.ofNullable(studentRepository.findById(id));
             System.out.println("startPollingForSemester starts @ id: " + id + " with rate: " + rate);
             if (studentOptional.isPresent())
                 updateStudentWithSemester(studentOptional.get());
@@ -240,7 +240,7 @@ public class StudentService {
 
         if (!studentRepository.existsById(studentId)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         try {
-            Student student = studentRepository.findById(studentId).get();
+            Student student = studentRepository.findById(studentId);
             Files.copy(bytes, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();

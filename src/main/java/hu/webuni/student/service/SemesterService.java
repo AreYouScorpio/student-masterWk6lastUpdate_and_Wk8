@@ -39,11 +39,11 @@ public class SemesterService {
         }
         // local version:
         int result = random.nextInt(0, 6);
-        System.out.println("FreeSemester(s) got from SemesterService/getFreeSemester locally: " + result);
+        System.out.println("FreeSemester(s) got from SemesterService/getFreeSemester locally (XML): " + result);
         // remote version / XML from centralSystem server on 8081:
         CentralsystemXmlWs centralsystemXmlWsImplPort = new CentralsystemXmlWsImplService().getCentralsystemXmlWsImplPort(); // a port az interface szinonimaja a wsdl-ben
         result = centralsystemXmlWsImplPort.getFreeSemesterByCentralId(1);
-        System.out.println("FreeSemester(s) got from centralSystem remotely: " + result);
+        System.out.println("FreeSemester(s) got from centralSystem remotely (XML): " + result);
 
         //for testing, mocking testNumber++:
 
@@ -91,16 +91,15 @@ public class SemesterService {
     public void askNumFreeSemestersForStudent(int eduId) {
         Student actualStudent = studentRepository.findByCentralId(eduId);
         System.out.println("Actual student in askNumFreeSemestersForStudent is " + actualStudent.toString());
-        long studentId = studentRepository.findByCentralId(eduId).getId();
+        long studentId = studentRepository.findByCentralId(eduId).getId(); // elveszik az adat, mindig 0 a sima id?
         Topic topic = educationJmsTemplate.execute(session -> session.createTopic("free_semester_responses")); // topic letrehozasa hozza
         //az execute-tal lehet barmit megcsinalni
         //megkapja a jms sessiont, ami a belepesi pontja a jms apinak
         FreeSemesterRequest freeSemesterRequest = new FreeSemesterRequest();
-        //freeSemesterRequest.setStudentId(eduId);
-        freeSemesterRequest.setStudentId((int)studentId);
+        freeSemesterRequest.setStudentId(eduId); //studentId valojaban eduId(centralId)
 
         System.out.println("eduId/centralId = " + eduId);
-        System.out.println("StudentId based on eduId/centralId = " + studentId);
+        System.out.println("StudentId based on eduId/centralId = " + studentId); //elveszik a normal id?
 
         educationJmsTemplate.convertAndSend("free_semester_requests",
                 freeSemesterRequest,  //ezt kuldom uzenetet.. itt vege is lenne normal esetben: educationJmsTemplate.convertAndSend("free_semester_requests", freeSemesterRequest), de be kell allitani headert, a ReplyTo-ban akarom kuldeni az infot

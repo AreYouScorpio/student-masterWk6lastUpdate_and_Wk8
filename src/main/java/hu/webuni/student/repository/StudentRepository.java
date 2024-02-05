@@ -10,6 +10,7 @@ public interface StudentRepository extends
         JpaSpecificationExecutor<Student>,
         QuerydslPredicateExecutor<Student> {
 
+    Student findById(long id);
     Student findByCentralId(int centralId);
     //QueryDSL 2. course-hoz ezt is hozzá kell adni, h Predicate is átadható legyen, az AirportService-ben (korábbi FlightSpecben )
 
