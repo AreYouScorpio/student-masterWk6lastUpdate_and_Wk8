@@ -3,6 +3,7 @@ package hu.webuni.student.service;
 import hu.webuni.student.aspect.Retry;
 import hu.webuni.student.error.ErrorDecision;
 import hu.webuni.jms.dto.FreeSemesterRequest;
+import hu.webuni.student.model.Student;
 import hu.webuni.student.repository.StudentRepository;
 import hu.webuni.student.wsclient.CentralsystemXmlWs;
 import hu.webuni.student.wsclient.CentralsystemXmlWsImplService;
@@ -88,7 +89,8 @@ public class SemesterService {
 //    }
 
     public void askNumFreeSemestersForStudent(int eduId) {
-
+        Student actualStudent = studentRepository.findByCentralId(eduId);
+        System.out.println("Actual student in askNumFreeSemestersForStudent is " + actualStudent.toString());
         long studentId = studentRepository.findByCentralId(eduId).getId();
         Topic topic = educationJmsTemplate.execute(session -> session.createTopic("free_semester_responses")); // topic letrehozasa hozza
         //az execute-tal lehet barmit megcsinalni
