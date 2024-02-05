@@ -46,6 +46,7 @@ public abstract class AppUser {
 
     private String facebookId;
 
+    private String googleId;
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles;
 
