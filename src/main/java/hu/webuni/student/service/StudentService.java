@@ -168,8 +168,10 @@ public class StudentService {
         studentRepository.findAll().forEach(student ->
         {
             System.out.println("Student updating by cron call: " + student.toString());
-            updateStudentWithSemester(student); // old synch XML-WS call
-            //updateStudentWithSemester(student.getCentralId(), -1); // new asynch message version (JMS)
+            System.out.println("StudentService/updateSemesters studentid : " + student.getCentralId());
+            //***** COMMENT OUT WHICH ONE YOU DONT WANT TO RUN:
+            //updateStudentWithSemester(student); // old synch XML-WS call
+            updateStudentWithSemester(student.getCentralId(), -1); // new asynch message version (JMS)
 
         });
 
@@ -194,7 +196,7 @@ public class StudentService {
 
 
     public void updateStudentWithSemester(int studentId, int freesemester) { // new asynch message version (JMS)
-        Student newAsynchMessageStudent = studentRepository.findById((long)studentId).get();
+        Student newAsynchMessageStudent = studentRepository.findByCentralId(studentId);
         try {
 
             //this is the new asynch message version (1/Feb/2024):

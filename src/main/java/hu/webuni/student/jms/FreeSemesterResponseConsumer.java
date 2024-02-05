@@ -12,8 +12,9 @@ public class FreeSemesterResponseConsumer {
 
     private final StudentService studentService;
 
-    @JmsListener(destination = "free_semester_responses", containerFactory = "educationFactory") //dest = ahova a converandsend kuldi topicra, onnet kapjuk
-    public void onFreeSemesterResponse(FreeSemesterResponse response) {
+    //fogadja is a valaszt
+    @JmsListener(destination = "free_semester_responses", containerFactory = "educationFactory") //dest = ahova a converandsend kuldi topicra, onnet kapjuk .. ide a containerFactory kell, nem a connectionFactory !
+    public void onFreeSemesterResponse(FreeSemesterResponse response) { //itt eleg a payload, nem kell a header
         studentService.updateStudentWithSemester(response.getStudentId(), response.getNumFreeSemesters());
     }
 }

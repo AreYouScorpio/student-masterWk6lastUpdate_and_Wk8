@@ -3,6 +3,7 @@ package hu.webuni.student.service;
 import hu.webuni.student.aspect.Retry;
 import hu.webuni.student.error.ErrorDecision;
 import hu.webuni.jms.dto.FreeSemesterRequest;
+import hu.webuni.student.repository.StudentRepository;
 import hu.webuni.student.wsclient.CentralsystemXmlWs;
 import hu.webuni.student.wsclient.CentralsystemXmlWsImplService;
 import jakarta.jms.Topic;
@@ -23,7 +24,10 @@ public class SemesterService {
     @Autowired
     ErrorDecision errorDecision;
 
-    private final JmsTemplate educationJmsTemplate;
+    private final JmsTemplate educationJmsTemplate; // kell egy template Wk7
+
+    @Autowired
+    StudentRepository studentRepository;
 
     @Retry
     public int getFreeSemester(long centralId) {
@@ -85,14 +89,24 @@ public class SemesterService {
 
     public void askNumFreeSemestersForStudent(int eduId) {
 
-        Topic topic = educationJmsTemplate.execute(session -> session.createTopic("free_semester_responses"));
-
+        long studentId = studentRepository.findByCentralId(eduId).getId();
+        Topic topic = educationJmsTemplate.execute(session -> session.createTopic("free_semester_responses")); // topic letrehozasa hozza
+        //az execute-tal lehet barmit megcsinalni
+        //megkapja a jms sessiont, ami a belepesi pontja a jms apinak
         FreeSemesterRequest freeSemesterRequest = new FreeSemesterRequest();
-        freeSemesterRequest.setStudentId(eduId);
-        educationJmsTemplate.convertAndSend("free_semester_requests", freeSemesterRequest, message -> {
-            message.setJMSReplyTo(topic);
-            return message;
+        //freeSemesterRequest.setStudentId(eduId);
+        freeSemesterRequest.setStudentId((int)studentId);
+
+        System.out.println("eduId/centralId = " + eduId);
+        System.out.println("StudentId based on eduId/centralId = " + studentId);
+
+        educationJmsTemplate.convertAndSend("free_semester_requests",
+                freeSemesterRequest,  //ezt kuldom uzenetet.. itt vege is lenne normal esetben: educationJmsTemplate.convertAndSend("free_semester_requests", freeSemesterRequest), de be kell allitani headert, a ReplyTo-ban akarom kuldeni az infot
+               message -> { //megkapjuk a jms message-et
+            message.setJMSReplyTo(topic); //beallitjuk rajta a ReplyTo mezot egy topic-ra .. a topic-ot itt par sorral feljebb letrehozzuk hozza
+            return message; // mielott visszaterek magaval a message-el
         });
+
 
     }
 

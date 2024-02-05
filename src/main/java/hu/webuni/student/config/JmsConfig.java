@@ -52,21 +52,26 @@ public class JmsConfig {
 
 
 
- */         //ehelyett szetszedve:
+ */         //myFactory helyett szetszedve, m 2 serverrel is beszelget, igy 2 factory kell neki:
+    // + application.properties-ben is
+    // #Wk7 - a 2 factory miatt (2 szerverrel beszelunk), ezeket kikommentelni (mert mar itt vannak a portok definialva):
+    //#spring.artemis.broker-url=tcp://localhost:61616
+    //#spring.jms.pub-sub-domain=true
 
     @Bean
-    public ConnectionFactory financeConnectionFactory() {
+    public ConnectionFactory financeConnectionFactory() { //ez meg csak a connection, kell meg, ami a consumereket gyartja
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
         return connectionFactory;
     }
 
     @Bean
-    public ConnectionFactory educationConnectionFactory() {
+    public ConnectionFactory educationConnectionFactory() { //ez meg csak a connection, kell meg, ami a consumereket gyartja, ld lejjebb 1. es 2. consumert (financeFactory es educationFactory)
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61617");
         return connectionFactory;
     }
 
-    @Bean
+    //SemesterService-ben a tovabbi beallitasok
+    @Bean // template osszeallitasa, innen az education fele fogunk kuldeni, ezert educationConnectionFactory() .. ha meg egy iranyba kuldenenk, meg egy ilyen Bean metodus kellene
     public JmsTemplate educationTemplate(ObjectMapper objectMapper) {
         JmsTemplate jmsTemplate = new JmsTemplate();
         jmsTemplate.setConnectionFactory(educationConnectionFactory());
@@ -76,7 +81,7 @@ public class JmsConfig {
 
     @Bean
     public JmsListenerContainerFactory<?> financeFactory(ConnectionFactory financeConnectionFactory,
-                                                         DefaultJmsListenerContainerFactoryConfigurer configurer) {
+                                                         DefaultJmsListenerContainerFactoryConfigurer configurer) { //1. consumer
 
         return setPubSubAndDurableSubscription(financeConnectionFactory, configurer, "student-master");
     }
@@ -87,6 +92,7 @@ public class JmsConfig {
             DefaultJmsListenerContainerFactoryConfigurer configurer,
             String clientId) {
 
+        //mind a financeFactory es educationFactory - t Topic-ra allitjuk itt. mindkettonel azonos, m Topic mind2
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setClientId(clientId);
         configurer.configure(factory, connectionFactory);
@@ -98,7 +104,7 @@ public class JmsConfig {
 
     @Bean
     public JmsListenerContainerFactory<?> educationFactory(ConnectionFactory educationConnectionFactory,
-                                                           DefaultJmsListenerContainerFactoryConfigurer configurer) {
+                                                           DefaultJmsListenerContainerFactoryConfigurer configurer) { //2. consumer
 
         return setPubSubAndDurableSubscription(educationConnectionFactory, configurer, "student-master");
     }
