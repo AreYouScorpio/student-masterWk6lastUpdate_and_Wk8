@@ -24,7 +24,7 @@ public class GoogleLoginService {
 
     private final UserRepository userRepository;
 
-    @Value("${university.google-client-id}") //springes @Value, nem lombokos
+    @Value("${app.google-client-id}") //springes @Value, nem lombokos
     private String googleClientId;
     //You can provide a default value in case the property is not found. For example: @Value("${university.google-client-id:default-value}").
 
