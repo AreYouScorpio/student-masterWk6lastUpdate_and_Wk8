@@ -2,6 +2,7 @@ package hu.webuni.student.model;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 
 import jakarta.persistence.*;
@@ -17,13 +18,15 @@ import java.util.Set;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @ToString//(onlyExplicitlyIncluded = true)
 @Entity
-@Cacheable
+//@Cacheable
 @Audited
-@Getter
-@Setter
+//@Getter
+//@Setter
 public class Student extends AppUser{
 
-    @Generated
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private long id;
 
     /*

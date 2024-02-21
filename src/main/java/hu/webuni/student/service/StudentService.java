@@ -8,6 +8,7 @@ import hu.webuni.student.model.Student;
 import hu.webuni.student.repository.CourseRepository;
 import hu.webuni.student.repository.ImageRepository;
 import hu.webuni.student.repository.StudentRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,8 @@ import java.util.concurrent.ScheduledFuture;
 @Service
 public class StudentService {
 
+    //@Autowired
+    //private EntityManager entityManager;
     private final ImageRepository imageRepository;
     @Autowired
     StudentRepository studentRepository;
@@ -178,12 +181,28 @@ public class StudentService {
     }
 
 
+    @Transactional
+    public void updateFreeSemesters(int eduId, int numFreeSemesters) {
 
+        Student studentToSetup = studentRepository.findByCentralId(eduId);
+        if (studentToSetup != null) {
+            System.out.println("This is the to be actualized student: " + studentRepository.findByCentralId(eduId));
+            studentToSetup.setFreeSemester(numFreeSemesters);
+            //entityManager.clear();
+            studentRepository.save(studentToSetup);
+            System.out.println("Free semester set up for " + eduId + " for value of " + numFreeSemesters + " within StudentService/updateFreeSemesters successfully.");
+            System.out.println("This is the actualized student: " + studentRepository.findByCentralId(eduId));
+        }
+        else {
+            System.out.println("Free semester set up failed within StudentService/updateFreeSemesters as studentToSetup is null.");}
+    }
 
     private void updateStudentWithSemester(Student student) { // old synch XML-WS call
         //this was the original synchronized XML-WS call
         try {
             student.setFreeSemester(semesterService.getFreeSemester(student.getCentralId()));
+            //entityManager.clear();
+            //entityManager.refresh(student);
             studentRepository.save(student);
             System.out.println("The new student saved with synch XML-WS call: " + student.toString());
         } catch (Exception e) {
@@ -194,14 +213,14 @@ public class StudentService {
     }
 
 
-
     public void updateStudentWithSemester(int studentId, int freesemester) { // new asynch message version (JMS), studentId is centralId/eduId now
         Student newAsynchMessageStudent = studentRepository.findByCentralId(studentId);
         try {
 
             //this is the new asynch message version (1/Feb/2024):
             System.out.println("The new student to be saved with asynch message version (JMS): " + newAsynchMessageStudent.toString());
-            semesterService.askNumFreeSemestersForStudent(newAsynchMessageStudent.getCentralId());
+            semesterService.askNumFreeSemestersForStudent(newAsynchMessageStudent.getCentralId()); //1x hivja ez
+            //entityManager.refresh(newAsynchMessageStudent);
             studentRepository.save(newAsynchMessageStudent);
             System.out.println("The new student saved with asynch message version (JMS): " + newAsynchMessageStudent.toString());
 

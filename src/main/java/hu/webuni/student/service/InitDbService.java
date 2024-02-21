@@ -253,8 +253,9 @@ public class InitDbService {
 
     }
 
+    @Transactional
     private Student saveNewStudent(String name, LocalDate birthdate, int semester, int centralId, String username, String pass) {
-        return studentRepository.save(
+        Student savedStudent =  studentRepository.save(
                 Student.builder()
                         .name(name)
                         .birthdate(birthdate)
@@ -263,6 +264,9 @@ public class InitDbService {
                         .username(username)
                         .password(passwordEncoder.encode(pass))
                         .build());
+
+        System.out.println("Student saved, id: " + savedStudent.getId());
+        return savedStudent;
     }
 
     private Teacher saveNewTeacher(String name, LocalDate birthdate, String username, String pass) {

@@ -30,6 +30,7 @@ public class SemesterService {
     @Autowired
     StudentRepository studentRepository;
 
+
     @Retry
     public int getFreeSemester(long centralId) {
         System.out.println("getFreeSemester called");
@@ -88,7 +89,7 @@ public class SemesterService {
 //        return result;
 //    }
 
-    public void askNumFreeSemestersForStudent(int eduId) {
+    public void askNumFreeSemestersForStudent(int eduId) { // ez a felelos a request kuldesert
         Student actualStudent = studentRepository.findByCentralId(eduId);
         System.out.println("Actual student in askNumFreeSemestersForStudent is " + actualStudent.toString());
         long studentId = studentRepository.findByCentralId(eduId).getId(); // elveszik az adat, mindig 0 a sima id?
@@ -99,6 +100,7 @@ public class SemesterService {
         freeSemesterRequest.setStudentId(eduId); //studentId valojaban eduId(centralId)
 
         System.out.println("eduId/centralId = " + eduId);
+
         System.out.println("StudentId based on eduId/centralId = " + studentId); //elveszik a normal id?
 
         educationJmsTemplate.convertAndSend("free_semester_requests",
